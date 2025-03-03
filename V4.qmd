@@ -806,6 +806,7 @@ reg_model_1 <- multinom(hit_outcome ~
                    data = batting_without_g3) 
 
 ```
+
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 model_1_tidy <- tidy(reg_model_1)
 
@@ -846,6 +847,13 @@ model_1_tidy <- model_1_tidy[c("term",
 
 that_cell <- rep(FALSE, 8)  # Initialize all FALSE
 that_cell[4] <- TRUE  
+```
+
+```{r echo=FALSE}
+# making interpretations table 
+intial.interpretations <- data.frame(
+  Estimate = c("events", "release_speed", "launch_angle", "bat_speed", "swing_length"),
+  Interpretation,
 ```
 
 ```{r echo=FALSE}
