@@ -1,0 +1,151 @@
+
+
+```{r warning=FALSE}
+library(baseballr)
+library(tidyverse)
+
+devtools::install_github("mlascaleia/baseballr")
+```
+
+```{r}
+# start and end dates 
+start_date <- as.Date("2024-03-28")
+end_date <- as.Date("2024-10-01")
+
+# making a sequence of dates that the loop can go through 
+date_sequence <- seq.Date(from = start_date,
+                          to = end_date,
+                          by = "day")
+
+# first data table for values to go into 
+full_data_2024 <- statcast_search(start_date = start_date, "2024-03-29", player_type = 'batter')
+
+# loop for as long as there are dates 
+for (i in 2:length(date_sequence)){
+  
+  # getting the single day
+  day_i <- date_sequence[i] 
+  
+  # scrape for that specific date
+  current_data <- statcast_search(start_date = day_i,
+                                  end_date = day_i,
+                                  player_type = "batter"
+                                  )
+  
+  # adding current data to the full dataset 
+  full_data_2024 <- bind_rows(full_data_2024, current_data)
+}
+```
+
+```{r}
+
+# no data all star break 
+data_7_15_2024 <- statcast_search(start_date = "2024-07-15", "2024-07-15", player_type = 'batter')
+
+which(date_sequence == "2024-07-19")
+
+for (i in 114:length(date_sequence)){
+  
+  # getting the single day
+  day_i <- date_sequence[i] 
+  
+  # scrape for that specific date
+  current_data <- statcast_search(start_date = day_i,
+                                  end_date = day_i,
+                                  player_type = "batter"
+                                  )
+  
+  # adding current data to the full dataset 
+  full_data_2024 <- bind_rows(full_data_2024, current_data)
+}
+```
+
+```{r}
+
+full_data_2024 <- bind_rows(full_data_2024, current_data)
+
+
+which(date_sequence == "2024-09-29")
+
+for (i in 186:length(date_sequence)){
+  
+  # getting the single day
+  day_i <- date_sequence[i] 
+  
+  # scrape for that specific date
+  current_data <- statcast_search(start_date = day_i,
+                                  end_date = day_i,
+                                  player_type = "batter"
+                                  )
+  
+  # adding current data to the full dataset 
+  full_data_2024 <- bind_rows(full_data_2024, current_data)
+}
+
+full_data_2024 <- bind_rows(full_data_2024, current_data)
+
+```
+
+```{r}
+write_csv(full_data_2024, "/Users/vivianjohnson/Desktop/SYE/full_batting_data_2024.csv")
+```
+
+```{r}
+# getting from oct 11-oct 30 
+start_date1 <- as.Date("2024-10-03")
+end_date1 <- as.Date("2024-10-30")
+
+# making a sequence of dates that the loop can go through 
+date_sequence_one <- seq.Date(from = start_date1,
+                          to = end_date1,
+                          by = "day")
+```
+
+```{r}
+full_data_playoffs <- statcast_search(start_date = "2024-10-02",
+                                      end_date = "2024-10-02",
+                                      player_type = 'batter')
+
+
+
+for (i in 1 : length(date_sequence_one)){
+  
+  # getting the single day
+  day_i <- date_sequence_one[i] 
+  
+  # scrape for that specific date
+  current_data <- statcast_search(start_date = day_i,
+                                  end_date = day_i,
+                                  player_type = "batter"
+                                    )
+  
+  print(paste("Processing date:", day_i))
+  # Check if there's data for the day
+  if (nrow(current_data) == 0) {
+    print(paste("No data for date:", day_i, "- skipping"))
+    next  # Skip to the next iteration if there's no data
+  }
+  # adding current data to the full dataset 
+  full_data_playoffs <- bind_rows(full_data_playoffs, current_data)
+}
+
+
+```
+
+```{r}
+write_csv(full_data_playoffs,
+          "/Users/vivianjohnson/Desktop/SYE/full_batting_playoffs.csv")
+```
+
+```{r}
+regular <- read_csv("full_batting_data_2024.csv")
+playoffs <- read_csv("full_batting_playoffs.csv")
+```
+
+```{r}
+full_2024_batting <- bind_rows(regular, playoffs)
+
+write_csv(full_2024_batting,
+          "/Users/vivianjohnson/Desktop/SYE/season_2024_batting_data.csv")
+```
+

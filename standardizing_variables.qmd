@@ -1,0 +1,227 @@
+```{r}
+library(tidyverse)
+
+batting_data_2024 <- read_csv("batting_data_2024.csv")
+
+# removing deprecated columns 
+batting_data_2024 <- batting_data_2024 %>% select(-spin_dir, -spin_rate_deprecated,-break_angle_deprecated, -break_length_deprecated, -tfs_deprecated, -tfs_zulu_deprecated, -umpire)
+```
+
+
+```{r}
+# creating standardized variables in new columns 
+
+subset_cols <- batting_data_2024[, c("launch_speed", "bat_speed", "release_speed", "swing_length", "launch_angle")] 
+
+# filtering to make sure there are no na values 
+subset_cols <- subset_cols %>% filter(!is.na(bat_speed) &
+                                                        !is.na(launch_speed) &
+                                                        !is.na(swing_length) &
+                                                        !is.na(launch_angle)) %>%
+  mutate(launch_angle_sq = (launch_angle)^2)
+
+
+# only standardizing some of the variables 
+cols_to_standardize <- c("bat_speed", "release_speed", "swing_length", "launch_speed")
+
+standardized_cols <- scale(subset_cols[, cols_to_standardize])
+
+standardized_dataframe <- as.data.frame(standardized_cols)
+                         
+# renaming varaibles 
+standardized_dataframe <- standardized_dataframe %>% rename(swing_length_zscore = swing_length,
+                                                            bat_speed_zscore = bat_speed,
+                                                            release_speed_zscore = release_speed,
+                                                            launch_speed_zscore = launch_speed)
+
+# adding not standardized launch angle to that dataset 
+standardized_dataframe$launch_angle <- subset_cols$launch_angle
+standardized_dataframe$launch_speed <- subset_cols$launch_speed
+standardized_dataframe$bat_speed <- subset_cols$bat_speed
+standardized_dataframe$release_speed <- subset_cols$release_speed
+standardized_dataframe$swing_length <- subset_cols$swing_length
+standardized_dataframe$launch_angle_sq <- subset_cols$launch_angle_sq
+
+
+```
+
+## Predicting Launch Speed 
+
+### Regression 1: Predicting Launch Speed Using Bat Speed, Release Speed, Launch Angle, and Swing Length
+
+```{r}
+# Predicting launch speed with an interaction and regular launch angle 
+reg_launch_speed <- lm(launch_speed ~
+                         bat_speed_zscore +
+                         release_speed_zscore +
+                         launch_angle +
+                         swing_length_zscore +
+                         bat_speed_zscore:swing_length_zscore,
+                   data = standardized_dataframe)
+
+summary(reg_launch_speed)
+plot(reg_launch_speed)
+```
+`bat_speed_zscore` = $5.730$ Holding other variables in the model constant, a one standard deviation (sd = 7.082?) increase in bat speed is associated with a 5.730 mph increase in launch speed
+
+`release_speed_zscore` = $1.089$ Holding other variables in the model constant, a one standard deviation increase in pitch speed is associated with a 1.089 mph increase in launch speed
+
+`launch_angle` = $0.0087$ Holding other variables in the model constant, a one degree increase in launch angle is associated with a 0.0087 mph increase in launch speed
+
+`swing_length_zscore` = $-0.942$ Holding other variables in the model constant, a one standard deviation increase in swing length is associated with a 0.942 mph decrease in launch speed
+
+`bat_speed_zscore:swing_length_zscore` = $-0.559$ The effect of bat speed on launch speed is weaker when swing length is above average. 
+
+### Comparing Predicted Launch Speed to Actual Launch Speed 
+
+```{r}
+
+# getting the predicted values and the actual values 
+
+# getting the predicted values 
+standardized_dataframe$predicted_ls <- predict(reg_launch_speed)
+
+comparing_data_speed <- standardized_dataframe %>%
+  select(launch_speed, predicted_ls) %>%
+  pivot_longer(
+    cols = c("launch_speed", "predicted_ls"), 
+    names_to = "Type",
+    values_to = "Launch Speed"
+  )
+
+violin_launch_speed <- ggplot(data = comparing_data_speed,
+                              mapping = aes(x = Type,
+                                            y = `Launch Speed`,
+                                            fill = Type)) +
+  geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1,
+               position = position_dodge(0.9),
+               outlier.shape = NA) +
+  labs(title = "Violin Plot of Actual vs. Predicted Launch Speed",
+       x = "Type",
+       y = "Launch speed") +
+  theme_minimal()
+
+violin_launch_speed
+
+```
+
+### Regression 2: Predicting Launch Speed Using launch angle squared (not standardized) and the above mentioned variables 
+```{r}
+# Regression with an interaction and a squared launch angle, using standardized variables 
+reg_squared_angle <- lm(launch_speed ~
+                         bat_speed_zscore +
+                         release_speed_zscore +
+                         launch_angle_sq +
+                         swing_length_zscore +
+                         bat_speed_zscore:swing_length_zscore,
+                   data = standardized_dataframe)
+
+summary(reg_squared_angle)
+plot(reg_squared_angle)
+```
+
+### Comparing Predicted Launch Speed to Actual Launch Speed 
+
+```{r}
+
+# getting the predicted values and the actual values 
+
+# getting the predicted values 
+standardized_dataframe$predicted_ls_sq <- predict(reg_squared_angle)
+
+comparing_data_speed2 <- standardized_dataframe %>%
+  select(launch_speed, predicted_ls_sq) %>%
+  pivot_longer(
+    cols = c("launch_speed", "predicted_ls_sq"), 
+    names_to = "Type",
+    values_to = "Launch Speed"
+  )
+
+violin_launch_speed2 <- ggplot(data = comparing_data_speed2,
+                              mapping = aes(x = Type,
+                                            y = `Launch Speed`,
+                                            fill = Type)) +
+  geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1,
+               position = position_dodge(0.9),
+               outlier.shape = NA) +
+  labs(title = "Violin Plot of Actual vs. Predicted Launch Speed Using Launch Angle Squared",
+       x = "Type",
+       y = "Launch speed") +
+  theme_minimal()
+
+violin_launch_speed2
+
+```
+
+## Predicting Launch Angle 
+
+- This would be useful as launch angles are often thought of a lot when trying to hit home runs 
+- Controversy among coaches regarding if players should purposefully try to have higher launch angle 
+
+### Regression 1: Predicting Launch Angle Using variables bat speed, launch speed, swing length, and an interaction between bat speed and swing length 
+
+```{r}
+reg_launch_angle <- lm(launch_angle ~
+                         bat_speed +
+                         launch_speed +
+                         swing_length +
+                         bat_speed:swing_length,
+                       data = standardized_dataframe)
+
+summary(reg_launch_angle)
+plot(reg_launch_angle)
+```
+
+
+### Regression 2: Predicting Launch Angle Using Standardized Variables bat speed, launch speed, swing length, and an interaction between bat speed and swing length 
+
+```{r}
+# Predicting Launch Angle using standardized varaibles 
+reg_launch_angle_zscore <- lm(launch_angle ~
+                         bat_speed_zscore +
+                         launch_speed_zscore +
+                         swing_length_zscore +
+                         bat_speed_zscore:swing_length_zscore,
+                       data = standardized_dataframe)
+
+summary(reg_launch_angle_zscore)
+plot(reg_launch_angle_zscore)
+
+```
+
+### Examining Actual Launch Angle vs. the Predicted Launch Angle in the Simple Regression 
+
+```{r}
+# getting the predicted values and the actual values 
+
+# getting the predicted values 
+standardized_dataframe$predicted_la <- predict(reg_launch_angle_zscore)
+
+comparing_data <- standardized_dataframe %>%
+  select(launch_angle, predicted_la) %>%
+  pivot_longer(
+    cols = c("launch_angle", "predicted_la"), 
+    names_to = "Type",
+    values_to = "Launch Angle"
+  )
+
+# violin plot of actual values for launch angle 
+violin_launch_angle <- ggplot(data = comparing_data,
+                              mapping = aes(x = Type,
+                                            y = `Launch Angle`,
+                                            fill = Type)) +
+  geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1,
+               position = position_dodge(0.9),
+               outlier.shape = NA) +
+  labs(title = "Violin Plot of Actual vs. Predicted Launch Angle",
+       x = "Type",
+       y = "Launch Launch Angle ") +
+  theme_minimal()
+
+violin_launch_angle
+
+```
+
