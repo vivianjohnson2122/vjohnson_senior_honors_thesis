@@ -850,13 +850,6 @@ that_cell[4] <- TRUE
 ```
 
 ```{r echo=FALSE}
-# making interpretations table 
-intial.interpretations <- data.frame(
-  Estimate = c("events", "release_speed", "launch_angle", "bat_speed", "swing_length"),
-  Interpretation,
-```
-
-```{r echo=FALSE}
 #| tbl-cap: "Stage 1 Multinomial Logistic Regression Output for Initial Model"
 #| label: "tbl-reg-1-output"
 #| tbl.pos: H
