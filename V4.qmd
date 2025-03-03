@@ -1,6 +1,6 @@
 ---
 title: "Exploring MLB Batting Data Using Logistic Regression"
-author: "Vivian Johnson" 
+author: "Vivian Johnson"
 format:
   pdf:
     pdf-engine: pdflatex
@@ -870,7 +870,10 @@ em_initial <- emmeans(reg_model_1,
                       ~ hit_outcome,
                       mode = "prob")
 
-summary_df_initial <- as.data.frame(summary(em_initial))
+summary_df_initial <- as.data.frame(summary(em_initial)) %>%
+    select(hit_outcome, prob, SE) %>%
+  rename(`Hit Outcome` = hit_outcome,
+         `Average Probability` = prob)
 
 ```
 
@@ -1119,7 +1122,9 @@ summary_df_smote <- as.data.frame(
   summary(
     em_smote
     ))%>%
-  select(hit_outcome_factor, prob, SE)
+  select(hit_outcome_factor, prob, SE) %>%
+  rename(`Hit Outcome` = hit_outcome_factor,
+         `Average Probability` = prob)
 
 ```
 
