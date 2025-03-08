@@ -866,6 +866,26 @@ kbl(model_1_tidy,
   
 ```
 
+
+```{r echo=FALSE}
+# interpretation table 
+var.des <- data.frame(
+  Term = c("Constant",
+           "Swing Length Z-Score",
+           "Bat Speed Z-Score", 
+           "Release Speed Z-Score",
+           "Launch Angle",
+           "Swing Length/Bat Speed Interaction"),
+  Estimate = c("-1.995",
+               "0.158",
+               "0.482",
+               "-0.010",
+               "0.065",
+               "0.090"),
+  `Interpretation ` = c()
+)
+```
+
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 em_initial <- emmeans(reg_model_1,
                       ~ hit_outcome,
@@ -1724,7 +1744,8 @@ kbl(accuracy_precision_comparison,
     booktabs = T) %>%
   kable_styling(latex_options = "striped") 
 ```
-@tbl-acc-prec-comp shows side by side comparisons of accuracy and precision for each model. While the models aren't perfect and there are inherent issues with class balance, bias, accuracy, and precision, the SMOTE model using synthetic data does a better job than the initial model according to these metrics. There are still issues with classification, as seen in the predicted probabilities. The SMOTE model is not extremely accurate in distinguishing singles from doubles/triples, but does a better job than the initial one. This iniability could simply be from the wide variation in ways a batter can hit a single, double/triple, which makes modeling difficult. 
+
+@tbl-acc-prec-comp shows side by side comparisons of accuracy and precision for each model. While the models aren't perfect and there are inherent issues with class balance, bias, accuracy, and precision, the SMOTE model using synthetic data does a better job than the initial model according to these metrics. There are still issues with classification, as seen in the predicted probabilities. The SMOTE model is not extremely accurate in distinguishing singles from doubles/triples, but does a better job than the initial one. This inability could simply be from the wide variation in ways a batter can hit a single, double/triple, which makes modeling difficult. A main goal of this project is to see the different impacts that certain mechanics have on the outcome of a swing, and how players and coaches can use that to their advantage. 
 
 \newpage
 
