@@ -6,14 +6,13 @@ format:
     pdf-engine: pdflatex
     toc: false
     keep-tex: true
-    float: false
+header-includes: |
+  \usepackage{float}
 execute: 
   warning: false
 abstract: |
   This project aims to study classification and its applications to Major League Baseball (MLB) batting data. The goal is to develop a model that is capable of classifying a hit based on various in-game metrics, including release speed, launch angle, bat speed, and swing length. The model development process incorporates different statistical techniques such as K-means cluster analysis and decision trees to understand the distributions of the data and how observations are being classified in the multinomial model. Additionally, specific balancing techniques are explored to address inherent bias and imbalance in the data for the purpose of making more accuracte classifications. 
 bibliography: references.bib
-header-includes:
-  - \usepackage{float}
 ---
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
@@ -143,9 +142,10 @@ batting_data_2024 <- batting_data_2024 %>%
 
 ### Important Variables
 
-@tbl-imp-variables gives descriptions of the variables used to create a model and analyze hit types.
+**Table 1** gives descriptions of the variables used to create a model and analyze hit types. The important variables considered in this project are `events`, `release_speed`, `launch_angle`, `bat_speed`, and `swing_length`. 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
+# creating table 1 data
 var.des <- data.frame(
   Variable = c("events", "release_speed", "launch_angle", "bat_speed", "swing_length"),
   Description = c(
@@ -158,21 +158,44 @@ var.des <- data.frame(
 )
 ```
 
-```{r echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-#| tbl-cap: "Description of Important Variables Used"
-#| label: "tbl-imp-variables"
-
+```{r echo=FALSE, warning=FALSE, message=FALSE, results='asis', }
+#table 1 
 kbl(var.des,
-    booktabs = T) %>%
-  kable_styling(latex_options = "striped") %>%
+    booktabs = T,
+    caption = "Important Variable Descriptions"
+    ) %>%
+  kable_styling(latex_options = c("striped",
+                                  "hold_position")) %>%
   column_spec(1, width = "4cm") %>%
   column_spec(2, width = "7cm")
 ```
 
+
 ### Indicator Variables 
 
 
-The indicator variable `hit_outcome` was created using the `events` variable in the data set and serves as the dependent variable for multinomial logistic regression. The table and code below describe the variable, as well as creating it using the data and storing it in an R object called `batting_with_indicators`. 
+The indicator variable `hit_outcome` was created using the `events` variable in the data set and serves as the dependent variable for multinomial logistic regression. **Table 2**, and the code below describe the variable, as well as creating it using the data, and storing it in an R object called `batting_with_indicators`. 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# making table 2 data 
+var.indicator <- data.frame(
+  Variable = c("hit_outcome"),
+  Description =
+    c("Indicator for the type of hit recorded in the `events` variable. 1 = single, 2 = extra base hit (double or triple), 3 = homerun")
+)
+
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# table 2
+kbl(var.indicator,
+    booktabs = T,
+    caption = "Description of Indicator Variables Used") %>%
+  kable_styling(latex_options = c("striped",
+                                  "hold_position")) %>%
+  column_spec(1, width = "4cm") %>%
+  column_spec(2, width = "7cm")
+```
 
 ```{r, warning=FALSE, results='hide'}
 # making the indicator variables  
@@ -194,30 +217,10 @@ batting_with_indicators <- batting_data_2024 %>%
       events == "home_run" ~ 3,
       events == "triple" | events == "double" ~ 2,
       events == "single" ~ 1)
-    ) %>% filter(
-      !is.na(hit_outcome)
-      )
-```
-
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-var.indicator <- data.frame(
-  Variable = c("hit_outcome"),
-  Description =
-    c("Indicator for the type of hit recorded in the `events` variable. 1 = single, 2 = extra base hit (double or triple), 3 = homerun")
-)
-
-```
-
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-#| tbl-cap: "Description of Indicator Variables Used"
-#| label: "tbl-indicator-variables"
-#| tbl.pos: "H"
-
-kbl(var.indicator,
-    booktabs = T) %>%
-  kable_styling(latex_options = "striped") %>%
-  column_spec(1, width = "4cm") %>%
-  column_spec(2, width = "7cm")
+    ) %>%
+  filter(
+    !is.na(hit_outcome)
+    )
 ```
 
 ### Standardizing Variables 
@@ -359,17 +362,20 @@ knitr::include_graphics("combined_plots.png")
 
 ### Correlations
 
-@tbl-corr shows a correlation matrix for the independent variables. The table includes standardized bat speed, standardized release score, standardized swing length, and launch angle. The highest correlation is between `bat speed` and `swing length`, with a value of $0.589$. This indicates a moderate positive correlation, which is logical, as higher bat speeds tend to be associated with longer swing lengths. 
+**Table 3** shows a correlation matrix for the independent variables. The table includes standardized bat speed, standardized release score, standardized swing length, and launch angle. The highest correlation is between `bat speed` and `swing length`, with a value of $0.589$. This indicates a moderate positive correlation, which is logical, as higher bat speeds tend to be associated with longer swing lengths. 
 
 Since this is the highest correlation, and other correlations are low, multicollinearity does not appear to be a significant concern in the data, given that none of the correlations are excessively high (above 0.8, which is usually considered to be an indicator of multicollinearity). 
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+# getting data for table 3 
 cor.matrix <- cor(batting_with_indicators[, c("bat_speed_zscore", 
                                               "release_speed_zscore", 
                                               "swing_length_zscore",
                                               "launch_angle")], 
-                  use = "complete.obs")
+                  use = "complete.obs"
+                  )
 
 cor_df <- cor.matrix %>% as.data.frame() %>%
   rename(
@@ -387,13 +393,13 @@ rownames(cor_df) <- c("Bat Speed",
 ```
 
 ```{r echo=FALSE}
-#| tbl-cap: "Correlation Matrix For Independent Varaibles"
-#| label: "tbl-corr"
-#| tbl.pos: "H"
-
+# table 3 
 kbl(cor_df,
-    booktabs = T) %>%
-  kable_styling(latex_options = "striped") %>%
+    booktabs = T,
+    caption = "Correlation Matrix For Independent Varaibles") %>%
+  kable_styling(latex_options = c("striped",
+                                  "hold_position")
+                )%>%
   column_spec(1, width = "2.5cm") %>%
   column_spec(2, width = "2cm") %>%
   column_spec(3, width = "2cm") %>%
@@ -489,20 +495,19 @@ colnames(cluster.df) <-
 ```
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
-#| tbl-cap: "K-Means Summary Statistics"
-#| label: "tbl-kmeanssum-variables"
-#| tbl.pos: "H"
-
+# table 4 
 kbl(cluster.df,
-    booktabs = T) %>%
-  kable_styling(latex_options = "striped") 
+    booktabs = T,
+    caption = "K-Means Summary Statistics") %>%
+  kable_styling(latex_options = c("striped",
+                                  "hold_position")) 
 
 ```
 
 
 @fig-cluster shows the results from performing K=3 Means Cluster Analysis. It is evident that the third cluster has significantly different bat speeds and swing lengths. Because the goal of this project is to examine the difference in hitting mechanics between true singles, extra base hits, and homeruns, it was determined that these hits, which are most likely check swings or bunts, don't accurately represent the data and that this cluster should be removed. 
 
-@tbl-kmeanssum-variables describes the cluster size, center, and within cluster sum of squares for each group. The within cluster sum of squares, also known as the intra-cluster variation, is the sum of the squared Euclidean distances between each observation and the center of the cluster (@wu2012cluster). A smaller WSS indicates that the observations are grouped closer together, thus forming a more specific group. Since the WSS of group 3 is significantly lower than the other two groups and relatively small, removing the observations in this group is not of high concern. 
+**Table 4** describes the cluster size, center, and within cluster sum of squares for each group. The within cluster sum of squares, also known as the intra-cluster variation, is the sum of the squared Euclidean distances between each observation and the center of the cluster (@wu2012cluster). A smaller WSS indicates that the observations are grouped closer together, thus forming a more specific group. Since the WSS of group 3 is significantly lower than the other two groups and relatively small, removing the observations in this group is not of high concern. 
 
 
 ```{r echo=FALSE}
@@ -516,7 +521,9 @@ batting_without_g3 <- batting_with_indicators %>%
 
 
 ```{r echo=FALSE, results='hide'}
-facet_labels <- c("1" = "Single", "2" = "Double/Triple", "3" = "Homerun")
+facet_labels <- c("1" = "Single",
+                  "2" = "Double/Triple",
+                  "3" = "Homerun")
 ```
 
 ```{r echo=FALSE,warning=FALSE}
@@ -808,6 +815,7 @@ reg_model_1 <- multinom(hit_outcome ~
 ```
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
+# building interpretation table (5)
 model_1_tidy <- tidy(reg_model_1)
 
 model_1_tidy <- model_1_tidy %>% select(-statistic)
@@ -850,14 +858,13 @@ that_cell[4] <- TRUE
 ```
 
 ```{r echo=FALSE}
-#| tbl-cap: "Stage 1 Multinomial Logistic Regression Output for Initial Model"
-#| label: "tbl-reg-1-output"
-#| tbl.pos: H
-
-
+# table 5 
 kbl(model_1_tidy,
-    booktabs = T) %>%
-  kable_styling(latex_options =  "striped") %>%
+    booktabs = T,
+    caption = "Stage 1 Multinomial Logistic Regression Output for Initial Model") %>%
+  kable_styling(latex_options =  c("striped",
+                                   "hold_position")
+                )%>%
   add_header_above(c(" ", "Double/Triple" = 2, "Homerun" = 2)) %>%
   column_spec(2,
               width = "3cm",
@@ -866,25 +873,88 @@ kbl(model_1_tidy,
   
 ```
 
+**Table 5** shows the multinomial regression output for the initial model. The bold coefficients represent those with a p-value that is significant at the 0.01 level. Using this table, we can view the coefficients for the model and understand how each contribute to the hit outcome. 
 
-```{r echo=FALSE}
-# interpretation table 
-var.des <- data.frame(
-  Term = c("Constant",
-           "Swing Length Z-Score",
-           "Bat Speed Z-Score", 
+
+There are two columns for the regression table, and the coefficients in each column represent the difference in log-odds resulting from a one unit change in the predictor between the base group, (hitting a single) and the corresponding hit column, which can be transformed into a probability.  
+
+It is important to note that the output is currently in the logit form, and must be converted to an odds ratio for an easier interpretation. We can do this by taking the logit coefficient, and performing the following calculation: 
+
+$$e^{\beta_i}$$
+For example, `launch_angle` has a value of $0.065$ in the double/triple column. Once we calculate the odds ratio to be $1.067$ We can interpret this as follows: 
+
+***On average, a one degree increase in a batter's launch angle is associated with an increase in the odds of hitting a double or a triple by a factor of 1.067***
+
+Each interpretation is comparing the difference in odds between the base group (which is hitting a single) and the corresponding group (in this case, a double/triple). We can also interpret the interaction between swing length and bat speed. With a logit coefficient of $0.09$, we can turn it into an odds ratio of $1.094$ and understand it as: 
+
+***On average, for each standard deviation increase in a batter’s swing length, the effect of standardized swing lenth on the odds of hitting a doulbe/triple instead of a single increases by a factor of 1.094*** 
+
+The interaction between bat speed and swing length suggests that as both increase, the likelihood of hitting a double or triple increases compared to a single. This is reflected in the positive interaction term, indicating that the effect of swing length on the hit outcome is enhanced as bat speed increases.
+
+**Table 6** has interpretations for each ***odds ratio*** coefficient, and we can use it to further understand the relationship that each predictor variable has on the odds of hitting a double/triple or a homerun compared to a single. 
+
+\newpage
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+initial.interp.df <- data.frame(
+  Term = c("Swing Length Z-Score",
+           "Bat Speed Z-Score",
            "Release Speed Z-Score",
            "Launch Angle",
-           "Swing Length/Bat Speed Interaction"),
-  Estimate = c("-1.995",
-               "0.158",
-               "0.482",
-               "-0.010",
-               "0.065",
-               "0.090"),
-  `Interpretation ` = c()
+           "Swing Length / Bat Speed Interaction"),
+  `Estimate` = c("1.171",
+                 "1.619",
+                 "0.99",
+                 "1.067",
+                 "1.094"),
+  `Interpretation` = c("On average, an increase in one standard deviation of a batter's swing length is associated with an increase in the odds of hitting a double or triple by a factor of 1.171.",
+                       "On average, an increase in one standard deviation of a batter's bat speed is associated with an increase in the odds of hitting a double or triple by a factor of 1.619",
+                       "On average, an increase in one standard deviation of a pitcher's release speed is associated with an decrease in the odds of hitting a double or triple by a factor of 0.99",
+                       "On average, an increase in one degree of a batter's launch angle is associated with an increase in the odds of hitting a double or triple by a factor of 1.067",
+                       "On average, for each standard deviation increase in a batter's swing length, the effect of standardized swing lenth on the odds of hitting a doulbe/triple instead of a single increases by a factor of 1.094."),
+  `Estimate` = c("1.483",
+                 "4.998",
+                 "1.090",
+                 "1.231",
+                 "0.784"),
+  `Interpretation ` = c("On average, an increase in one standard deviation of a batter's swing length is associated with an increase in the odds of hitting a homerun by a factor of 1.483",
+                        "On average, an increase in one standard deviation of a batter's bat speed is associated with an increase in the odds of hitting a homerun by a factor of 4.998",
+                        "On average, an increase in one standard deviation of a pitcher's release speed is associated with an increase in the odds of hitting a homerun by a factor of 1.090",
+                        "On average, an increase in one degree of a batter's launch angle is associated with an increase in the odds of hitting a homerun by a factor of 1.231",
+                        "On average, for each standard deviation increase in a batter's swing length, the effect of standardized swing lenth on the odds of hitting a homerun instead of a single decreases by a factor of 0.784")
 )
+
+colnames(initial.interp.df) <-
+  c("Term",
+    "Estimate (Logit)",
+    "Interpretation",
+    "Estimate ",
+    "Interpretation ")
+
+that_cell <- rep(FALSE, 8)  # Initialize all FALSE
+that_cell[3] <- TRUE  
+
+# making table 
+kbl(initial.interp.df,
+    booktabs = T,
+    caption = "Stage 1 Multinomial Logistic Regression Coefficient Interpretations") %>%
+  kable_styling(latex_options =  c("striped",
+                                   "hold_position"),
+                font_size = 10) %>%
+  add_header_above(c(" ",
+                     "Double/Triple" = 2,
+                     "Homerun" = 2)) %>%
+  column_spec(1, width = "3cm") %>%
+  column_spec(2, width = "2cm",
+              bold = ifelse(that_cell, F, T)) %>%
+  column_spec(3, width = "4cm") %>%
+  column_spec(4, width = "2cm",
+              bold = TRUE) %>%
+  column_spec(5, width = "4cm")
 ```
+
+\newpage
+
+The package `emmeans` in R compares the estimated marginal means. In this model, it allows us to see the differences in the average predicted probabilities for each hit outcome. 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 em_initial <- emmeans(reg_model_1,
@@ -899,34 +969,21 @@ summary_df_initial <- as.data.frame(summary(em_initial)) %>%
 ```
 
 ```{r echo=FALSE}
-#| tbl-cap: "Stage 1 emmeans Summary for Initial Model"
-#| label: "tbl-reg-1-emmeans"
-#| tbl.pos: "H"
-
+# table 7 
 kbl(summary_df_initial,
-    booktabs = T) %>%
-  kable_styling(latex_options =  "striped")
+    booktabs = T,
+    caption = "Stage 1 emmeans Summary for Initial Model") %>%
+  kable_styling(latex_options =  c("striped",
+                                   "hold_position"))
 ```
 
+**Table 7** shows the estimated probabilities for each hit outcome in this model. Singles are estimated to occur the most, about $75.2$% of the time, followed by doubles and triples ($22.6$%), and the least likely to occur are home runs ($2.1$%). 
 
-
-@tbl-reg-1-output shows the multinomial regression output for the initial model. The bold coefficients represent those that have a p-value that is significant at the 0.01 level. Using this table, we can view the coefficients for the model and understand how each contribute to the hit outcome. There are two columns for the regression table, and the coefficients in each column represent the difference in log-odds resulting from a one unit change in the predictor between the base group, (hitting a single) and the corresponding hit column, which can be transformed into a probability.  
-
-For example, `launch_angle` has a value of $0.065$ in the double/triple column. We can interpret this as follows: 
-
-***On average, a one degree increase in a batter's launch angle is associated with an increase in the probability of hitting a double or a triple by about 1.07%***
-
-We can also interpret the interaction between swing length and bat speed. With a logit coefficient of 0.09, we can turn it into a probability and understand it as: 
-
-***The interaction between bat speed and swing length suggests that as both increase, the likelihood of hitting a double or triple increases compared to a single. This is reflected in the positive interaction term, indicating that the effect of swing length on the hit outcome is enhanced as bat speed increases.***
-
-The package `emmeans` in r compares the estimated marginal means. In this model, it allows us to see the differences in the mean predicted probabilities for each hit outcome. 
-
-@tbl-reg-1-emmeans shows the estimated probabilities for each hit outcome in this model. Singles are estimated to occur the most, about 75.2% of the time, followed by doubles and triples (22.6%), and the least likely to occur are home runs (2.1%). While hitting a single in a baseball game is more common than other types of hits, there is still a stark difference in the probability of each hit occurring, this is likely due to the imbalance in the data set, with the model being more tailored to predicting singles because they are much more prevalent in the data. 
-
-
+While hitting a single in a baseball game is more common than other types of hits, there is still a stark difference in the probability of each hit occurring. This is likely due to the imbalance in the data set, with the model being more tailored to predicting singles because they are much more prevalent in the data. 
 
 #### Decision Tree Initial Model 
+
+@fig-init-dec-tree shows a decision tree of the initial model. The decision tree is a classification model that visualizes the steps that the model goes through when attempting to classify each observation. The nodes of the tree correspond to the decisions are made based on certain thresholds or levels of the predictor variables. The branches represent the outcome of the decision, or the comparison that was made, and the leaves represent the final predicted outcome of the response variable. The code below was used to generate the decision tree. 
 
 ```{r}
 initial_decision_tree <- rpart(hit_outcome ~ 
@@ -947,13 +1004,13 @@ rpart.plot(initial_decision_tree,
            type = 4)
 ```
 
-@fig-init-dec-tree shows a decision tree of the initial model. The decision tree is a classification model that visualizes the steps that the model goes through when attempting to classify each observation. The nodes of the tree correspond to the decisions are made based on certain thresholds or levels of the predictor variables. The branches represent the outcome of the decision, or the comparison that was made, and the leaves represent the final predicted outcome of the response variable. 
 
-From @fig-init-dec-tree, we can see that classifying the type of hit mostly relies on a hit's launch angle and bat speed. The model starts with all of the observations, and if the launch angle is less than 20, the hit is automatically classified as a single. Of those hits, it represents 68% of the data, and of that, 81% were actually singles, 19% were actually doubles/triples, and 0% were actually homeruns. The model continues to make similar comparisons until all terminal nodes are reached. 
+From @fig-init-dec-tree, we can see that classifying the type of hit mostly relies on a hit's launch angle and bat speed. The model starts with all of the observations, and if the launch angle is less than $20$, the hit is automatically classified as a single. Of those hits, it represents $68$% of the data, and of that, $81$% were actually singles, $19$% were actually doubles/triples, and $0$% were actually homeruns. The model continues to make similar comparisons until all terminal nodes are reached. 
 
-@fig-init-dec-tree has four terminal nodes. @tbl-decinitial-class shows the breakdown of each terminal node. It shows the outcome the model predicted, the percentage of the overall observations it makes up, as well as the percent of those observations that were actually of other classes. 
+@fig-init-dec-tree has four terminal nodes. **Table 8** shows the breakdown of each terminal node. It shows the outcome the model predicted, the percentage of the overall observations it makes up, as well as the percent of those observations that were actually of other classes. 
 
 ```{r warning=FALSE, message=FALSE, echo=FALSE}
+# table 8
 dec.initial.des <- data.frame(
   `Hit Outcome` = c("1", "1", "2", "3"),
   `Percent Observations` = c("68", "10", "6", "15"),
@@ -962,47 +1019,48 @@ dec.initial.des <- data.frame(
   `Percent Homerun` = c("0", "17", "28", "66")
 )
 
-colnames(dec.initial.des) <- c("Hit Outcome", "% Observations", "% Singles", "% Double Triple", "% Homerun")
+colnames(dec.initial.des) <- c("Hit Outcome",
+                               "% Observations",
+                               "% Singles",
+                               "% Double Triple",
+                               "% Homerun")
 
-```
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-#| tbl-cap: "Results of stage 1 decision tree classification for the initial model "
-#| label: "tbl-decinitial-class"
-#| tbl.pos: "H"
 
 kbl(dec.initial.des,
-    booktabs = T) %>%
-  kable_styling(latex_options =  "striped")
+    booktabs = T,
+    caption = "Results of stage 1 decision tree classification for the initial model") %>%
+  kable_styling(latex_options =  c("striped",
+                                   "hold_position"))
 ```
 
-It is evident that the model over classifies singles out of the data and doesn't classify doubles/triples very well (only 6% are being classified as doubles/triples). Among the terminal nodes for doubles/triples and homeruns, there is still a large percentage of those that are being incorrectly classified as singles. 
+It is evident that the model over classifies singles out of the data and doesn't classify doubles/triples very well (only $6$% are being classified as doubles/triples). Among the terminal nodes for doubles/triples and homeruns, there is still a large percentage of those that are being incorrectly classified as singles. 
 
 ### Balancing 
 
-While this model has some explanatory power, the coefficient estimators are biased and inconsistent. This is due to the inherent class imbalance among the different hit outcomes. Biased and inconsistent estimators are those that skewed away from the true population average. @tbl-summary-sample-size is a table corresponding to the relative sample sizes of each hit outcome (single, extra base, or homerun).
+While this model has some explanatory power, the coefficient estimators are biased and inconsistent. This is due to the inherent class imbalance among the different hit outcomes. Biased and inconsistent estimators are those that skewed away from the true population average. **Table 9** is a table corresponding to the relative sample sizes of each hit outcome (single, extra base, or homerun).
 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
+# table 9
 summary.sample.size <- data.frame(
   `Hit Outcome` = c("Single", "Double/Triple (Extra Base Hit)", "Homerun"),
   `Sample Size ` = c("23696", "7772", "5085")
 )
 
-colnames(summary.sample.size) <- c("Hit Outcome", "Sample Size")
-```
+colnames(summary.sample.size) <- c("Hit Outcome",
+                                   "Sample Size")
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-#| tbl-cap: "Summary of Sample Sizes for Each Class "
-#| label: "tbl-summary-sample-size"
-#| tbl.pos: "H"
+
 
 kbl(summary.sample.size,
-    booktabs = T) %>%
-  kable_styling(latex_options =  "striped")
+    booktabs = T,
+    caption = "Summary of Sample Sizes for Each Class") %>%
+  kable_styling(latex_options =  c("striped",
+                                   "hold_position"))
 ```
  
-Due to the fact that the sample size within the observed data for a single is 23696, while doubles/triples and homeruns have 7772 and 5085 observations respectively, singles are going to contribute much more to the overall model, thus causing the imbalance and bias towards predicting the singles hit.
+Due to the fact that the sample size within the observed data for a single is $23696$, while doubles/triples and homeruns have $7772$ and $5085$ observations respectively, singles are going to contribute much more to the overall model, thus causing the imbalance and bias towards predicting the singles hit.
 
 The singles hit in the data set are referred to as the majority class, meaning they have the higher sample size and at this moment contribute more to the model than the minority classes, the extra bases and the homeruns. Intervention is necessary at this point to combat the imbalance class size problem.
 
@@ -1021,7 +1079,7 @@ In their study comparing various types of prediction techniques for dealing with
 
 In conclusion, this literature provides useful evidence as to why the current batting data is flawed, and a detailed approach on how to employ the SMOTE algorithm to balance the data with the aim of creating a model that can better predict the `hit_outcome` of an at bat. 
 
-
+\newpage 
 ### SMOTE Model 
 
 In order to use the SMOTE algorithm, the data needs to be cleaned further. The code below describes this cleaning and formatting process, and stores the data in an object called `smote_data`. 
@@ -1052,7 +1110,7 @@ balanced_batting_data <-
   )
 ```
 
-After balancing the data set, we can now run multinomial logistic regression the same was as the initial model, except using the SMOTE dataset. 
+After balancing the data set, we can now run multinomial logistic regression the same way as the initial model, except using the SMOTE data set. 
 
 ```{r results='hide'}
 # logistic regression with the balanced data set 
@@ -1067,11 +1125,10 @@ reg_model_smote<- multinom(hit_outcome_factor ~
 ```
 
 
-```{r echo=FALSE}
-#| tbl-cap: "Stage 1 Multinomial Logistic Regression Output for SMOTE Model"
-#| label: "tbl-reg-smote-output"
-#| tbl.pos: "H"
+**Table 10** shows the multinomial regression output for the balanced smote model. We can interpret the coefficients of the launch angle and interaction term similarly to the interpretation for the initial model.  
 
+```{r echo=FALSE}
+# table 10 
 smote_tidy <- tidy(reg_model_smote)
 
 smote_tidy <- smote_tidy %>% select(-statistic)
@@ -1113,8 +1170,10 @@ that_cell <- rep(FALSE, 8)  # Initialize all FALSE
 that_cell[4] <- TRUE  
 
 kbl(smote_tidy,
-    booktabs = T) %>%
-  kable_styling(latex_options =  "striped") %>%
+    booktabs = T,
+    caption = "Stage 1 Multinomial Logistic Regression Output for SMOTE Model") %>%
+  kable_styling(latex_options =  c("striped",
+                                   "hold_position")) %>%
   add_header_above(c(" ", "Double/Triple" = 2, "Homerun" = 2)) %>%
   column_spec(2,
               width = "3cm",
@@ -1123,18 +1182,81 @@ kbl(smote_tidy,
   
 ```
 
-@tbl-reg-smote-output shows the multinomial regression output for the balanced smote model. We can interpret the coefficients of the launch angle and interaction term similarly to the interpretation for the initial model.  
-
 `launch_angle` has a value of $0.067$ in the double/triple column. We can interpret this as follows: 
 
 ***On average, a one degree increase in a batter's launch angle is associated with an increase in the probability of hitting a double or a triple by about 1.95%***
 
-With a logit coefficient of $0.107$, we can turn it into a probability and understand the interaction between swing length and bat speed as: 
+With a logit coefficient of $0.107$, we can turn it into an odds ratio of $1.113$ and understand the interaction between swing length and bat speed as: 
 
-***The interaction between bat speed and swing length suggests that as both increase, the likelihood of hitting a double or triple increases compared to a single. This is reflected in the positive interaction term, indicating that the effect of swing length on the hit outcome is enhanced as bat speed increases.***
+***On average, for each standard deviation increase in a batter's swing length, the effect of standardized swing lenth on the odds of hitting a double/triple instead of a single increases by a factor of 1.113***
 
+The interaction between bat speed and swing length suggests that as both increase, the likelihood of hitting a double or triple increases compared to a single. This is reflected in the positive interaction term, indicating that the effect of swing length on the hit outcome is enhanced as bat speed increases.
+
+**Table 11** shows the interpretations for the coefficients of the SMOTE model that were turned into odds ratios. This allows us to better understand the relationship between the predictors and hit types. From these, we can see that standardized bat speed as some of the most impact on differentiating between singles and doubles, as well as singles and homeruns. Release speed z-score has a negative effect on hitting a double or triple compared a single, meaning that as pitch speeds get higher, batters are less likely to hit a double or a triple. 
+
+\newpage 
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+smote.interp.df <- data.frame(
+  Term = c("Swing Length Z-Score",
+           "Bat Speed Z-Score",
+           "Release Speed Z-Score",
+           "Launch Angle",
+           "Swing Length / Bat Speed Interaction"),
+  `Estimate` = c("1.177",
+                 "1.659",
+                 "0.99",
+                 "1.069",
+                 "1.113"),
+  `Interpretation` = c("On average, an increase in one standard deviation of a batter's swing length is associated with an increase in the odds of hitting a double or triple by a factor of 1.177.",
+                       "On average, an increase in one standard deviation of a batter's bat speed is associated with an increase in the odds of hitting a double or triple by a factor of 1.659",
+                       "On average, an increase in one standard deviation of a pitcher's release speed is associated with an decrease in the odds of hitting a double or triple by a factor of 0.99",
+                       "On average, an increase in one degree of a batter's launch angle is associated with an increase in the odds of hitting a double or triple by a factor of 1.069",
+                       "On average, for each standard deviation increase in a batter's swing length, the effect of standardized swing lenth on the odds of hitting a double/triple instead of a single increases by a factor of 1.113"),
+  `Estimate` = c("1.522",
+                 "6.013",
+                 "1.092",
+                 "1.300",
+                 "0.737"),
+  `Interpretation ` = c("On average, an increase in one standard deviation of a batter's swing length is associated with an increase in the odds of hitting a homerun by a factor of 1.522",
+                        "On average, an increase in one standard deviation of a batter's bat speed is associated with an increase in the odds of hitting a homerun by a factor of 6.013",
+                        "On average, an increase in one standard deviation of a pitcher's release speed is associated with an increase in the odds of hitting a homerun by a factor of 1.092",
+                        "On average, an increase in one degree of a batter's launch angle is associated with an increase in the odds of hitting a homerun by a factor of 1.300",
+                        "On average, for each standard deviation increase in a batter's swing length, the effect of standardized swing lenth on the odds of hitting a homerun instead of a single decreases by a factor of 0.737")
+)
+
+colnames(initial.interp.df) <-
+  c("Term",
+    "Estimate (Odds Ratio)",
+    "Interpretation",
+    "Estimate (Odds Ratio)",
+    "Interpretation ")
+
+that_cell <- rep(FALSE, 8)  # Initialize all FALSE
+that_cell[3] <- TRUE  
+
+# making table 
+kbl(smote.interp.df,
+    booktabs = T,
+    caption = "Stage 1 Multinomial Logistic Regression Coefficient Interpretations SMOTE Model") %>%
+  kable_styling(latex_options =  c("striped",
+                                   "hold_position"),
+                font_size = 10) %>%
+  add_header_above(c(" ",
+                     "Double/Triple" = 2,
+                     "Homerun" = 2)) %>%
+  column_spec(1, width = "3cm") %>%
+  column_spec(2, width = "2cm",
+              bold = ifelse(that_cell, F, T)) %>%
+  column_spec(3, width = "4cm") %>%
+  column_spec(4, width = "2cm",
+              bold = TRUE) %>%
+  column_spec(5, width = "4cm")
+```
+
+\newpage 
 
 ```{r echo=FALSE}
+# table 12 
 em_smote <- emmeans(reg_model_smote,
                       ~ hit_outcome_factor,
                       mode = "prob")
@@ -1147,25 +1269,22 @@ summary_df_smote <- as.data.frame(
   rename(`Hit Outcome` = hit_outcome_factor,
          `Average Probability` = prob)
 
-```
 
-```{r echo = FALSE, results='asis', warning=FALSE}
-#| tbl-cap: "Stage 1 emmeans Summary Output for SMOTE Model"
-#| label: "tbl-emmeans-smote-output"
-#| tbl.pos: "H"
 
 kbl(summary_df_smote,
-    booktabs = T) %>%
-  kable_styling(latex_options =  "striped")
+    booktabs = T,
+    caption = "Stage 1 emmeans Summary Output for SMOTE Model") %>%
+  kable_styling(latex_options =  c("striped",
+                                   "hold_position"))
 
 ```
 
-@tbl-emmeans-smote-output shows the summary output for estimated probabilities of each hit type for the SMOTE model using a balanced data set. After balancing the data, it can be noted now that there is less of a difference in what hit type would be predicted, which should be the case if there are the same amounts of observations in each class. While the odds of predicting a single decreased, it is better for the overall model, as a lot of singles were being incorrectly identified.
+**Table 12** shows the emmeans summary output for the estimated probabilities of each hit type for the SMOTE model which uses a balanced data set. After balancing the data, it can be noted now that there is less of a difference in what hit type would be predicted, which should be the case if there are relatively the same amounts of observations in each class. While the odds of predicting a single decreased, it is better for the overall model, as a lot of singles were being incorrectly identified.
 
-
+\newpage 
 #### Decision Tree for SMOTE Model
 
-The code below generates the decision tree for the multinomial logistic regression using the balanced SMOTE data, which is displayed in @fig-dec-tree-smote. 
+The code below generates the decision tree using the balanced SMOTE data, which is displayed in @fig-dec-tree-smote. 
 
 ```{r}
 smote_decision_tree <- rpart(hit_outcome_factor ~
@@ -1185,13 +1304,9 @@ rpart.plot(smote_decision_tree,
            type = 4)
 ```
 
-Similar to the initial decision tree model, from @fig-dec-tree-smote, we can see that classifying the type of hit mostly relies on a hit's launch angle and bat speed. There are four terminal nodes. @tbl-decsmote-class below shows the breakdown of each terminal node. It shows the outcome the model predicted, the percentage of the overall observations it makes up, as well as the percent of those observations that were actually of other classes. 
+Similar to the initial decision tree model, from @fig-dec-tree-smote, we can see that classifying the type of hit mostly relies on a hit's launch angle and bat speed. There are four terminal nodes. **Table 13** below shows the breakdown of each terminal node. It shows the outcome the model predicted, the percentage of the overall observations it makes up, as well as the percent of those observations that were actually of other classes. 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
-#| tbl-cap: "Results of stage 1 decision tree classification for the SMOTE model "
-#| label: "tbl-decsmote-class"
-#| tbl.pos: "H"
-
 dec.smote.des <- data.frame(
   `Hit Outcome` = c("1", "1", "2", "3"),
   `Percent Observations` = c("32", "5", "20", "43"),
@@ -1200,15 +1315,21 @@ dec.smote.des <- data.frame(
   `Percent Homerun` = c("0", "0", "9", "68")
 )
 
-colnames(dec.smote.des) <- c("Hit Outcome", "% Observations", "% Singles", "% Double Triple", "% Homerun")
+colnames(dec.smote.des) <- c("Hit Outcome",
+                             "% Observations",
+                             "% Singles",
+                             "% Double Triple",
+                             "% Homerun")
 
 kbl(dec.smote.des,
-    booktabs = T) %>%
-  kable_styling(latex_options =  "striped")
+    booktabs = T,
+    caption = "Results of stage 1 decision tree classification for the SMOTE model") %>%
+  kable_styling(latex_options =  c("striped",
+                                   "hold_position"))
 ```
 
 
-After balancing the data, the decision tree does a better job at classifying doubles/triples and homeruns. In this model,57% of the correctly identified doubles/triples were classified correctly, opposed to 44% in the initial model, and the same is true for the homerun category. 
+After balancing the data, the decision tree does a better job at classifying doubles/triples and homeruns. In this model, $57$% of the correctly identified doubles/triples were classified correctly, opposed to $44$% in the initial model, and the same is true for the homerun category. 
 
 
 ## Stage 2 
@@ -1719,10 +1840,6 @@ $$Precision_{HomeRuns} = \frac{16350}{16350 + 3678 + 1548} = 0.758$$
 # Discussion and Implications
 
 ```{r echo=FALSE}
-#| tbl-cap: "Accuracy and Precision Comparison"
-#| label: "tbl-acc-prec-comp"
-#| tbl.pos: "H"
-
 # creating table comparing accuracy and precision
 
 accuracy_precision_comparison <- data.frame(
@@ -1741,11 +1858,13 @@ colnames(accuracy_precision_comparison ) <-
     "Precision HR")
 
 kbl(accuracy_precision_comparison,
-    booktabs = T) %>%
-  kable_styling(latex_options = "striped") 
+    booktabs = T,
+    caption = "Accuracy and Precision Comparison") %>%
+  kable_styling(latex_options = c("striped",
+                                  "hold_position")) 
 ```
 
-@tbl-acc-prec-comp shows side by side comparisons of accuracy and precision for each model. While the models aren't perfect and there are inherent issues with class balance, bias, accuracy, and precision, the SMOTE model using synthetic data does a better job than the initial model according to these metrics. There are still issues with classification, as seen in the predicted probabilities. The SMOTE model is not extremely accurate in distinguishing singles from doubles/triples, but does a better job than the initial one. This inability could simply be from the wide variation in ways a batter can hit a single, double/triple, which makes modeling difficult. A main goal of this project is to see the different impacts that certain mechanics have on the outcome of a swing, and how players and coaches can use that to their advantage. 
+**Table 14** shows side by side comparisons of accuracy and precision for each model. While the models aren't perfect and there are inherent issues with class balance, bias, accuracy, and precision, the SMOTE model using synthetic data does a better job than the initial model according to these metrics. There are still issues with classification, as seen in the predicted probabilities. The SMOTE model is not extremely accurate in distinguishing singles from doubles/triples, but does a better job than the initial one. This inability could simply be from the wide variation in ways a batter can hit a single, double/triple, which makes modeling difficult. A main goal of this project is to see the different impacts that certain mechanics have on the outcome of a swing, and how players and coaches can use that to their advantage. 
 
 \newpage
 

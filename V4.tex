@@ -448,16 +448,14 @@ longer collected and not useful to this project.
 
 \subsubsection{Important Variables}\label{important-variables}
 
-Table~\ref{tbl-imp-variables} gives descriptions of the variables used
-to create a model and analyze hit types.
+\textbf{Table 1} gives descriptions of the variables used to create a
+model and analyze hit types. The important variables considered in this
+project are \texttt{events}, \texttt{release\_speed},
+\texttt{launch\_angle}, \texttt{bat\_speed}, and \texttt{swing\_length}.
 
-\begin{table}
-
-\caption{\label{tbl-imp-variables}Description of Important Variables
-Used}
-
-\centering{
-
+\begin{table}[!h]
+\centering
+\caption{\label{tab:unnamed-chunk-5}Important Variable Descriptions}
 \centering
 \begin{tabular}[t]{>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{7cm}}
 \toprule
@@ -470,18 +468,28 @@ bat\_speed & Measurement of how fast the bat is moving when the player makes con
 \cellcolor{gray!10}{swing\_length} & \cellcolor{gray!10}{Total amount of feet the bat traveled during the swing (the total distance traveled by the barrel of the bat in x/y/z space)}\\
 \bottomrule
 \end{tabular}
-
-}
-
-\end{table}%
+\end{table}
 
 \subsubsection{Indicator Variables}\label{indicator-variables}
 
 The indicator variable \texttt{hit\_outcome} was created using the
 \texttt{events} variable in the data set and serves as the dependent
-variable for multinomial logistic regression. The table and code below
-describe the variable, as well as creating it using the data and storing
-it in an R object called \texttt{batting\_with\_indicators}.
+variable for multinomial logistic regression. \textbf{Table 2}, and the
+code below describe the variable, as well as creating it using the data,
+and storing it in an R object called \texttt{batting\_with\_indicators}.
+
+\begin{table}[!h]
+\centering
+\caption{\label{tab:unnamed-chunk-7}Description of Indicator Variables Used}
+\centering
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{7cm}}
+\toprule
+Variable & Description\\
+\midrule
+\cellcolor{gray!10}{hit\_outcome} & \cellcolor{gray!10}{Indicator for the type of hit recorded in the `events` variable. 1 = single, 2 = extra base hit (double or triple), 3 = homerun}\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -504,31 +512,12 @@ it in an R object called \texttt{batting\_with\_indicators}.
 \NormalTok{      events }\SpecialCharTok{==} \StringTok{"home\_run"} \SpecialCharTok{\textasciitilde{}} \DecValTok{3}\NormalTok{,}
 \NormalTok{      events }\SpecialCharTok{==} \StringTok{"triple"} \SpecialCharTok{|}\NormalTok{ events }\SpecialCharTok{==} \StringTok{"double"} \SpecialCharTok{\textasciitilde{}} \DecValTok{2}\NormalTok{,}
 \NormalTok{      events }\SpecialCharTok{==} \StringTok{"single"} \SpecialCharTok{\textasciitilde{}} \DecValTok{1}\NormalTok{)}
-\NormalTok{    ) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(}
-      \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(hit\_outcome)}
-\NormalTok{      )}
+\NormalTok{    ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+    \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(hit\_outcome)}
+\NormalTok{    )}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{table}
-
-\caption{\label{tbl-indicator-variables}Description of Indicator
-Variables Used}
-
-\centering{
-
-\centering
-\begin{tabular}[t]{>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{7cm}}
-\toprule
-Variable & Description\\
-\midrule
-\cellcolor{gray!10}{hit\_outcome} & \cellcolor{gray!10}{Indicator for the type of hit recorded in the `events` variable. 1 = single, 2 = extra base hit (double or triple), 3 = homerun}\\
-\bottomrule
-\end{tabular}
-
-}
-
-\end{table}%
 
 \subsubsection{Standardizing Variables}\label{standardizing-variables}
 
@@ -601,7 +590,7 @@ Variables}
 
 \subsubsection{Correlations}\label{correlations}
 
-Table~\ref{tbl-corr} shows a correlation matrix for the independent
+\textbf{Table 3} shows a correlation matrix for the independent
 variables. The table includes standardized bat speed, standardized
 release score, standardized swing length, and launch angle. The highest
 correlation is between \texttt{bat\ speed} and \texttt{swing\ length},
@@ -615,12 +604,9 @@ data, given that none of the correlations are excessively high (above
 0.8, which is usually considered to be an indicator of
 multicollinearity).
 
-\begin{table}
-
-\caption{\label{tbl-corr}Correlation Matrix For Independent Varaibles}
-
-\centering{
-
+\begin{table}[!h]
+\centering
+\caption{\label{tab:unnamed-chunk-15}Correlation Matrix For Independent Varaibles}
 \centering
 \begin{tabular}[t]{>{\raggedright\arraybackslash}p{2.5cm}>{\raggedleft\arraybackslash}p{2cm}>{\raggedleft\arraybackslash}p{2cm}>{\raggedleft\arraybackslash}p{2cm}>{\raggedleft\arraybackslash}p{2cm}}
 \toprule
@@ -632,10 +618,7 @@ Release Speed & 0.011 & 1.000 & -0.256 & -0.045\\
 Launch Angle & 0.174 & -0.045 & 0.148 & 1.000\\
 \bottomrule
 \end{tabular}
-
-}
-
-\end{table}%
+\end{table}
 
 \subsubsection{K Means Cluster Analysis}\label{k-means-cluster-analysis}
 
@@ -716,12 +699,9 @@ created.
 
 \end{figure}%
 
-\begin{table}
-
-\caption{\label{tbl-kmeanssum-variables}K-Means Summary Statistics}
-
-\centering{
-
+\begin{table}[!h]
+\centering
+\caption{\label{tab:unnamed-chunk-20}K-Means Summary Statistics}
 \centering
 \begin{tabular}[t]{llll}
 \toprule
@@ -732,10 +712,7 @@ Cluster & Cluster Size & Centers (swing length, bat speed) & WSS\\
 \cellcolor{gray!10}{3} & \cellcolor{gray!10}{162} & \cellcolor{gray!10}{(-6.891, -8.857)} & \cellcolor{gray!10}{236}\\
 \bottomrule
 \end{tabular}
-
-}
-
-\end{table}%
+\end{table}
 
 Figure~\ref{fig-cluster} shows the results from performing K=3 Means
 Cluster Analysis. It is evident that the third cluster has significantly
@@ -745,11 +722,11 @@ extra base hits, and homeruns, it was determined that these hits, which
 are most likely check swings or bunts, don't accurately represent the
 data and that this cluster should be removed.
 
-Table~\ref{tbl-kmeanssum-variables} describes the cluster size, center,
-and within cluster sum of squares for each group. The within cluster sum
-of squares, also known as the intra-cluster variation, is the sum of the
-squared Euclidean distances between each observation and the center of
-the cluster (Wu and Wu (2012)). A smaller WSS indicates that the
+\textbf{Table 4} describes the cluster size, center, and within cluster
+sum of squares for each group. The within cluster sum of squares, also
+known as the intra-cluster variation, is the sum of the squared
+Euclidean distances between each observation and the center of the
+cluster (Wu and Wu (2012)). A smaller WSS indicates that the
 observations are grouped closer together, thus forming a more specific
 group. Since the WSS of group 3 is significantly lower than the other
 two groups and relatively small, removing the observations in this group
@@ -892,13 +869,9 @@ interaction between \texttt{bat\_speed\_zscore} and
 \end{Highlighting}
 \end{Shaded}
 
-\begin{table}
-
-\caption{\label{tbl-reg-1-output}Stage 1 Multinomial Logistic Regression
-Output for Initial Model}
-
-\centering{
-
+\begin{table}[!h]
+\centering
+\caption{\label{tab:unnamed-chunk-32}Stage 1 Multinomial Logistic Regression Output for Initial Model}
 \centering
 \begin{tabular}[t]{l>{\raggedleft\arraybackslash}p{3cm}r>{\raggedleft\arraybackslash}p{2cm}r}
 \toprule
@@ -915,18 +888,86 @@ Release Speed Z-Score & -0.010 & 0.015 & \textbf{0.086} & 0.022\\
 Swing Length/Bat Speed Interaction & \textbf{0.090} & 0.019 & \textbf{-0.243} & 0.037\\
 \bottomrule
 \end{tabular}
+\end{table}
 
-}
+\textbf{Table 5} shows the multinomial regression output for the initial
+model. The bold coefficients represent those with a p-value that is
+significant at the 0.01 level. Using this table, we can view the
+coefficients for the model and understand how each contribute to the hit
+outcome.
 
-\end{table}%
+There are two columns for the regression table, and the coefficients in
+each column represent the difference in log-odds resulting from a one
+unit change in the predictor between the base group, (hitting a single)
+and the corresponding hit column, which can be transformed into a
+probability.
 
-\begin{table}
+It is important to note that the output is currently in the logit form,
+and must be converted to an odds ratio for an easier interpretation. We
+can do this by taking the logit coefficient, and performing the
+following calculation:
 
-\caption{\label{tbl-reg-1-emmeans}Stage 1 emmeans Summary for Initial
-Model}
+\[e^{\beta_i}\] For example, \texttt{launch\_angle} has a value of
+\(0.065\) in the double/triple column. Once we calculate the odds ratio
+to be \(1.067\) We can interpret this as follows:
 
-\centering{
+\textbf{\emph{On average, a one degree increase in a batter's launch
+angle is associated with an increase in the odds of hitting a double or
+a triple by a factor of 1.067}}
 
+Each interpretation is comparing the difference in odds between the base
+group (which is hitting a single) and the corresponding group (in this
+case, a double/triple). We can also interpret the interaction between
+swing length and bat speed. With a logit coefficient of \(0.09\), we can
+turn it into an odds ratio of \(1.094\) and understand it as:
+
+\textbf{\emph{On average, for each standard deviation increase in a
+batter's swing length, the effect of standardized swing lenth on the
+odds of hitting a doulbe/triple instead of a single increases by a
+factor of 1.094}}
+
+The interaction between bat speed and swing length suggests that as both
+increase, the likelihood of hitting a double or triple increases
+compared to a single. This is reflected in the positive interaction
+term, indicating that the effect of swing length on the hit outcome is
+enhanced as bat speed increases.
+
+\textbf{Table 6} has interpretations for each \textbf{\emph{odds ratio}}
+coefficient, and we can use it to further understand the relationship
+that each predictor variable has on the odds of hitting a double/triple
+or a homerun compared to a single.
+
+\newpage
+
+\begin{table}[!h]
+\centering
+\caption{\label{tab:unnamed-chunk-33}Stage 1 Multinomial Logistic Regression Coefficient Interpretations}
+\centering
+\fontsize{10}{12}\selectfont
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{3cm}>{\raggedright\arraybackslash}p{2cm}>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{2cm}>{\raggedright\arraybackslash}p{4cm}}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Double/Triple} & \multicolumn{2}{c}{Homerun} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+Term & Estimate (Logit) & Interpretation & Estimate  & Interpretation \\
+\midrule
+\cellcolor{gray!10}{Swing Length Z-Score} & \textbf{\cellcolor{gray!10}{1.171}} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a batter's swing length is associated with an increase in the odds of hitting a double or triple by a factor of 1.171.} & \textbf{\cellcolor{gray!10}{1.483}} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a batter's swing length is associated with an increase in the odds of hitting a homerun by a factor of 1.483}\\
+Bat Speed Z-Score & \textbf{1.619} & On average, an increase in one standard deviation of a batter's bat speed is associated with an increase in the odds of hitting a double or triple by a factor of 1.619 & \textbf{4.998} & On average, an increase in one standard deviation of a batter's bat speed is associated with an increase in the odds of hitting a homerun by a factor of 4.998\\
+\cellcolor{gray!10}{Release Speed Z-Score} & \cellcolor{gray!10}{0.99} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a pitcher's release speed is associated with an decrease in the odds of hitting a double or triple by a factor of 0.99} & \textbf{\cellcolor{gray!10}{1.090}} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a pitcher's release speed is associated with an increase in the odds of hitting a homerun by a factor of 1.090}\\
+Launch Angle & \textbf{1.067} & On average, an increase in one degree of a batter's launch angle is associated with an increase in the odds of hitting a double or triple by a factor of 1.067 & \textbf{1.231} & On average, an increase in one degree of a batter's launch angle is associated with an increase in the odds of hitting a homerun by a factor of 1.231\\
+\cellcolor{gray!10}{Swing Length / Bat Speed Interaction} & \textbf{\cellcolor{gray!10}{1.094}} & \cellcolor{gray!10}{On average, for each standard deviation increase in a batter's swing length, the effect of standardized swing lenth on the odds of hitting a doulbe/triple instead of a single increases by a factor of 1.094.} & \textbf{\cellcolor{gray!10}{0.784}} & \cellcolor{gray!10}{On average, for each standard deviation increase in a batter's swing length, the effect of standardized swing lenth on the odds of hitting a homerun instead of a single decreases by a factor of 0.784}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+The package \texttt{emmeans} in R compares the estimated marginal means.
+In this model, it allows us to see the differences in the average
+predicted probabilities for each hit outcome.
+
+\begin{table}[!h]
+\centering
+\caption{\label{tab:unnamed-chunk-35}Stage 1 emmeans Summary for Initial Model}
 \centering
 \begin{tabular}[t]{lrr}
 \toprule
@@ -937,54 +978,31 @@ Hit Outcome & Average Probability & SE\\
 \cellcolor{gray!10}{3} & \cellcolor{gray!10}{0.0214645} & \cellcolor{gray!10}{0.0008994}\\
 \bottomrule
 \end{tabular}
+\end{table}
 
-}
+\textbf{Table 7} shows the estimated probabilities for each hit outcome
+in this model. Singles are estimated to occur the most, about \(75.2\)\%
+of the time, followed by doubles and triples (\(22.6\)\%), and the least
+likely to occur are home runs (\(2.1\)\%).
 
-\end{table}%
-
-Table~\ref{tbl-reg-1-output} shows the multinomial regression output for
-the initial model. The bold coefficients represent those that have a
-p-value that is significant at the 0.01 level. Using this table, we can
-view the coefficients for the model and understand how each contribute
-to the hit outcome. There are two columns for the regression table, and
-the coefficients in each column represent the difference in log-odds
-resulting from a one unit change in the predictor between the base
-group, (hitting a single) and the corresponding hit column, which can be
-transformed into a probability.
-
-For example, \texttt{launch\_angle} has a value of \(0.065\) in the
-double/triple column. We can interpret this as follows:
-
-\textbf{\emph{On average, a one degree increase in a batter's launch
-angle is associated with an increase in the probability of hitting a
-double or a triple by about 1.07\%}}
-
-We can also interpret the interaction between swing length and bat
-speed. With a logit coefficient of 0.09, we can turn it into a
-probability and understand it as:
-
-\textbf{\emph{The interaction between bat speed and swing length
-suggests that as both increase, the likelihood of hitting a double or
-triple increases compared to a single. This is reflected in the positive
-interaction term, indicating that the effect of swing length on the hit
-outcome is enhanced as bat speed increases.}}
-
-The package \texttt{emmeans} in r compares the estimated marginal means.
-In this model, it allows us to see the differences in the mean predicted
-probabilities for each hit outcome.
-
-Table~\ref{tbl-reg-1-emmeans} shows the estimated probabilities for each
-hit outcome in this model. Singles are estimated to occur the most,
-about 75.2\% of the time, followed by doubles and triples (22.6\%), and
-the least likely to occur are home runs (2.1\%). While hitting a single
-in a baseball game is more common than other types of hits, there is
-still a stark difference in the probability of each hit occurring, this
-is likely due to the imbalance in the data set, with the model being
-more tailored to predicting singles because they are much more prevalent
-in the data.
+While hitting a single in a baseball game is more common than other
+types of hits, there is still a stark difference in the probability of
+each hit occurring. This is likely due to the imbalance in the data set,
+with the model being more tailored to predicting singles because they
+are much more prevalent in the data.
 
 \paragraph{Decision Tree Initial
 Model}\label{decision-tree-initial-model}
+
+Figure~\ref{fig-init-dec-tree} shows a decision tree of the initial
+model. The decision tree is a classification model that visualizes the
+steps that the model goes through when attempting to classify each
+observation. The nodes of the tree correspond to the decisions are made
+based on certain thresholds or levels of the predictor variables. The
+branches represent the outcome of the decision, or the comparison that
+was made, and the leaves represent the final predicted outcome of the
+response variable. The code below was used to generate the decision
+tree.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1010,37 +1028,24 @@ Model}\label{decision-tree-initial-model}
 
 \end{figure}%
 
-Figure~\ref{fig-init-dec-tree} shows a decision tree of the initial
-model. The decision tree is a classification model that visualizes the
-steps that the model goes through when attempting to classify each
-observation. The nodes of the tree correspond to the decisions are made
-based on certain thresholds or levels of the predictor variables. The
-branches represent the outcome of the decision, or the comparison that
-was made, and the leaves represent the final predicted outcome of the
-response variable.
-
 From Figure~\ref{fig-init-dec-tree}, we can see that classifying the
 type of hit mostly relies on a hit's launch angle and bat speed. The
 model starts with all of the observations, and if the launch angle is
-less than 20, the hit is automatically classified as a single. Of those
-hits, it represents 68\% of the data, and of that, 81\% were actually
-singles, 19\% were actually doubles/triples, and 0\% were actually
-homeruns. The model continues to make similar comparisons until all
-terminal nodes are reached.
+less than \(20\), the hit is automatically classified as a single. Of
+those hits, it represents \(68\)\% of the data, and of that, \(81\)\%
+were actually singles, \(19\)\% were actually doubles/triples, and
+\(0\)\% were actually homeruns. The model continues to make similar
+comparisons until all terminal nodes are reached.
 
-Figure~\ref{fig-init-dec-tree} has four terminal nodes.
-Table~\ref{tbl-decinitial-class} shows the breakdown of each terminal
-node. It shows the outcome the model predicted, the percentage of the
-overall observations it makes up, as well as the percent of those
-observations that were actually of other classes.
+Figure~\ref{fig-init-dec-tree} has four terminal nodes. \textbf{Table 8}
+shows the breakdown of each terminal node. It shows the outcome the
+model predicted, the percentage of the overall observations it makes up,
+as well as the percent of those observations that were actually of other
+classes.
 
-\begin{table}
-
-\caption{\label{tbl-decinitial-class}Results of stage 1 decision tree
-classification for the initial model}
-
-\centering{
-
+\begin{table}[!h]
+\centering
+\caption{\label{tab:unnamed-chunk-38}Results of stage 1 decision tree classification for the initial model}
 \centering
 \begin{tabular}[t]{lllll}
 \toprule
@@ -1052,13 +1057,10 @@ Hit Outcome & \% Observations & \% Singles & \% Double Triple & \% Homerun\\
 3 & 15 & 16 & 18 & 66\\
 \bottomrule
 \end{tabular}
-
-}
-
-\end{table}%
+\end{table}
 
 It is evident that the model over classifies singles out of the data and
-doesn't classify doubles/triples very well (only 6\% are being
+doesn't classify doubles/triples very well (only \(6\)\% are being
 classified as doubles/triples). Among the terminal nodes for
 doubles/triples and homeruns, there is still a large percentage of those
 that are being incorrectly classified as singles.
@@ -1068,18 +1070,13 @@ that are being incorrectly classified as singles.
 While this model has some explanatory power, the coefficient estimators
 are biased and inconsistent. This is due to the inherent class imbalance
 among the different hit outcomes. Biased and inconsistent estimators are
-those that skewed away from the true population average.
-Table~\ref{tbl-summary-sample-size} is a table corresponding to the
-relative sample sizes of each hit outcome (single, extra base, or
-homerun).
+those that skewed away from the true population average. \textbf{Table
+9} is a table corresponding to the relative sample sizes of each hit
+outcome (single, extra base, or homerun).
 
-\begin{table}
-
-\caption{\label{tbl-summary-sample-size}Summary of Sample Sizes for Each
-Class}
-
-\centering{
-
+\begin{table}[!h]
+\centering
+\caption{\label{tab:unnamed-chunk-39}Summary of Sample Sizes for Each Class}
 \centering
 \begin{tabular}[t]{ll}
 \toprule
@@ -1090,16 +1087,13 @@ Double/Triple (Extra Base Hit) & 7772\\
 \cellcolor{gray!10}{Homerun} & \cellcolor{gray!10}{5085}\\
 \bottomrule
 \end{tabular}
-
-}
-
-\end{table}%
+\end{table}
 
 Due to the fact that the sample size within the observed data for a
-single is 23696, while doubles/triples and homeruns have 7772 and 5085
-observations respectively, singles are going to contribute much more to
-the overall model, thus causing the imbalance and bias towards
-predicting the singles hit.
+single is \(23696\), while doubles/triples and homeruns have \(7772\)
+and \(5085\) observations respectively, singles are going to contribute
+much more to the overall model, thus causing the imbalance and bias
+towards predicting the singles hit.
 
 The singles hit in the data set are referred to as the majority class,
 meaning they have the higher sample size and at this moment contribute
@@ -1174,6 +1168,8 @@ current batting data is flawed, and a detailed approach on how to employ
 the SMOTE algorithm to balance the data with the aim of creating a model
 that can better predict the \texttt{hit\_outcome} of an at bat.
 
+\newpage
+
 \subsubsection{SMOTE Model}\label{smote-model}
 
 In order to use the SMOTE algorithm, the data needs to be cleaned
@@ -1213,8 +1209,8 @@ roughly balanced data set.
 \end{Shaded}
 
 After balancing the data set, we can now run multinomial logistic
-regression the same was as the initial model, except using the SMOTE
-dataset.
+regression the same way as the initial model, except using the SMOTE
+data set.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1229,13 +1225,14 @@ dataset.
 \end{Highlighting}
 \end{Shaded}
 
-\begin{table}
+\textbf{Table 10} shows the multinomial regression output for the
+balanced smote model. We can interpret the coefficients of the launch
+angle and interaction term similarly to the interpretation for the
+initial model.
 
-\caption{\label{tbl-reg-smote-output}Stage 1 Multinomial Logistic
-Regression Output for SMOTE Model}
-
-\centering{
-
+\begin{table}[!h]
+\centering
+\caption{\label{tab:unnamed-chunk-43}Stage 1 Multinomial Logistic Regression Output for SMOTE Model}
 \centering
 \begin{tabular}[t]{l>{\raggedleft\arraybackslash}p{3cm}r>{\raggedleft\arraybackslash}p{2cm}r}
 \toprule
@@ -1252,15 +1249,7 @@ Release Speed Z-Score & -0.010 & 0.011 & \textbf{0.088} & 0.015\\
 Swing Length/Bat Speed Interaction & \textbf{0.107} & 0.015 & \textbf{-0.305} & 0.028\\
 \bottomrule
 \end{tabular}
-
-}
-
-\end{table}%
-
-Table~\ref{tbl-reg-smote-output} shows the multinomial regression output
-for the balanced smote model. We can interpret the coefficients of the
-launch angle and interaction term similarly to the interpretation for
-the initial model.
+\end{table}
 
 \texttt{launch\_angle} has a value of \(0.067\) in the double/triple
 column. We can interpret this as follows:
@@ -1269,22 +1258,57 @@ column. We can interpret this as follows:
 angle is associated with an increase in the probability of hitting a
 double or a triple by about 1.95\%}}
 
-With a logit coefficient of \(0.107\), we can turn it into a probability
-and understand the interaction between swing length and bat speed as:
+With a logit coefficient of \(0.107\), we can turn it into an odds ratio
+of \(1.113\) and understand the interaction between swing length and bat
+speed as:
 
-\textbf{\emph{The interaction between bat speed and swing length
-suggests that as both increase, the likelihood of hitting a double or
-triple increases compared to a single. This is reflected in the positive
-interaction term, indicating that the effect of swing length on the hit
-outcome is enhanced as bat speed increases.}}
+\textbf{\emph{On average, for each standard deviation increase in a
+batter's swing length, the effect of standardized swing lenth on the
+odds of hitting a double/triple instead of a single increases by a
+factor of 1.113}}
 
-\begin{table}
+The interaction between bat speed and swing length suggests that as both
+increase, the likelihood of hitting a double or triple increases
+compared to a single. This is reflected in the positive interaction
+term, indicating that the effect of swing length on the hit outcome is
+enhanced as bat speed increases.
 
-\caption{\label{tbl-emmeans-smote-output}Stage 1 emmeans Summary Output
-for SMOTE Model}
+\textbf{Table 11} shows the interpretations for the coefficients of the
+SMOTE model that were turned into odds ratios. This allows us to better
+understand the relationship between the predictors and hit types. From
+these, we can see that standardized bat speed as some of the most impact
+on differentiating between singles and doubles, as well as singles and
+homeruns. Release speed z-score has a negative effect on hitting a
+double or triple compared a single, meaning that as pitch speeds get
+higher, batters are less likely to hit a double or a triple.
 
-\centering{
+\newpage
 
+\begin{table}[!h]
+\centering
+\caption{\label{tab:unnamed-chunk-44}Stage 1 Multinomial Logistic Regression Coefficient Interpretations SMOTE Model}
+\centering
+\fontsize{10}{12}\selectfont
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{3cm}>{\raggedright\arraybackslash}p{2cm}>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{2cm}>{\raggedright\arraybackslash}p{4cm}}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Double/Triple} & \multicolumn{2}{c}{Homerun} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+Term & Estimate & Interpretation & Estimate.1 & Interpretation.\\
+\midrule
+\cellcolor{gray!10}{Swing Length Z-Score} & \textbf{\cellcolor{gray!10}{1.177}} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a batter's swing length is associated with an increase in the odds of hitting a double or triple by a factor of 1.177.} & \textbf{\cellcolor{gray!10}{1.522}} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a batter's swing length is associated with an increase in the odds of hitting a homerun by a factor of 1.522}\\
+Bat Speed Z-Score & \textbf{1.659} & On average, an increase in one standard deviation of a batter's bat speed is associated with an increase in the odds of hitting a double or triple by a factor of 1.659 & \textbf{6.013} & On average, an increase in one standard deviation of a batter's bat speed is associated with an increase in the odds of hitting a homerun by a factor of 6.013\\
+\cellcolor{gray!10}{Release Speed Z-Score} & \cellcolor{gray!10}{0.99} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a pitcher's release speed is associated with an decrease in the odds of hitting a double or triple by a factor of 0.99} & \textbf{\cellcolor{gray!10}{1.092}} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a pitcher's release speed is associated with an increase in the odds of hitting a homerun by a factor of 1.092}\\
+Launch Angle & \textbf{1.069} & On average, an increase in one degree of a batter's launch angle is associated with an increase in the odds of hitting a double or triple by a factor of 1.069 & \textbf{1.300} & On average, an increase in one degree of a batter's launch angle is associated with an increase in the odds of hitting a homerun by a factor of 1.300\\
+\cellcolor{gray!10}{Swing Length / Bat Speed Interaction} & \textbf{\cellcolor{gray!10}{1.113}} & \cellcolor{gray!10}{On average, for each standard deviation increase in a batter's swing length, the effect of standardized swing lenth on the odds of hitting a double/triple instead of a single increases by a factor of 1.113} & \textbf{\cellcolor{gray!10}{0.737}} & \cellcolor{gray!10}{On average, for each standard deviation increase in a batter's swing length, the effect of standardized swing lenth on the odds of hitting a homerun instead of a single decreases by a factor of 0.737}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+\begin{table}[!h]
+\centering
+\caption{\label{tab:unnamed-chunk-45}Stage 1 emmeans Summary Output for SMOTE Model}
 \centering
 \begin{tabular}[t]{lrr}
 \toprule
@@ -1295,26 +1319,24 @@ Hit Outcome & Average Probability & SE\\
 \cellcolor{gray!10}{3} & \cellcolor{gray!10}{0.1013815} & \cellcolor{gray!10}{0.0019387}\\
 \bottomrule
 \end{tabular}
+\end{table}
 
-}
-
-\end{table}%
-
-Table~\ref{tbl-emmeans-smote-output} shows the summary output for
-estimated probabilities of each hit type for the SMOTE model using a
-balanced data set. After balancing the data, it can be noted now that
-there is less of a difference in what hit type would be predicted, which
-should be the case if there are the same amounts of observations in each
-class. While the odds of predicting a single decreased, it is better for
-the overall model, as a lot of singles were being incorrectly
+\textbf{Table 12} shows the emmeans summary output for the estimated
+probabilities of each hit type for the SMOTE model which uses a balanced
+data set. After balancing the data, it can be noted now that there is
+less of a difference in what hit type would be predicted, which should
+be the case if there are relatively the same amounts of observations in
+each class. While the odds of predicting a single decreased, it is
+better for the overall model, as a lot of singles were being incorrectly
 identified.
+
+\newpage
 
 \paragraph{Decision Tree for SMOTE
 Model}\label{decision-tree-for-smote-model}
 
-The code below generates the decision tree for the multinomial logistic
-regression using the balanced SMOTE data, which is displayed in
-Figure~\ref{fig-dec-tree-smote}.
+The code below generates the decision tree using the balanced SMOTE
+data, which is displayed in Figure~\ref{fig-dec-tree-smote}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1343,18 +1365,14 @@ Figure~\ref{fig-dec-tree-smote}.
 Similar to the initial decision tree model, from
 Figure~\ref{fig-dec-tree-smote}, we can see that classifying the type of
 hit mostly relies on a hit's launch angle and bat speed. There are four
-terminal nodes. Table~\ref{tbl-decsmote-class} below shows the breakdown
-of each terminal node. It shows the outcome the model predicted, the
-percentage of the overall observations it makes up, as well as the
-percent of those observations that were actually of other classes.
+terminal nodes. \textbf{Table 13} below shows the breakdown of each
+terminal node. It shows the outcome the model predicted, the percentage
+of the overall observations it makes up, as well as the percent of those
+observations that were actually of other classes.
 
-\begin{table}
-
-\caption{\label{tbl-decsmote-class}Results of stage 1 decision tree
-classification for the SMOTE model}
-
-\centering{
-
+\begin{table}[!h]
+\centering
+\caption{\label{tab:unnamed-chunk-48}Results of stage 1 decision tree classification for the SMOTE model}
 \centering
 \begin{tabular}[t]{lllll}
 \toprule
@@ -1366,15 +1384,12 @@ Hit Outcome & \% Observations & \% Singles & \% Double Triple & \% Homerun\\
 3 & 43 & 10 & 22 & 68\\
 \bottomrule
 \end{tabular}
-
-}
-
-\end{table}%
+\end{table}
 
 After balancing the data, the decision tree does a better job at
-classifying doubles/triples and homeruns. In this model,57\% of the
+classifying doubles/triples and homeruns. In this model, \(57\)\% of the
 correctly identified doubles/triples were classified correctly, opposed
-to 44\% in the initial model, and the same is true for the homerun
+to \(44\)\% in the initial model, and the same is true for the homerun
 category.
 
 \subsection{Stage 2}\label{stage-2}
@@ -1772,12 +1787,9 @@ initial model.
 
 \section{Discussion and Implications}\label{discussion-and-implications}
 
-\begin{table}
-
-\caption{\label{tbl-acc-prec-comp}Accuracy and Precision Comparison}
-
-\centering{
-
+\begin{table}[!h]
+\centering
+\caption{\label{tab:unnamed-chunk-69}Accuracy and Precision Comparison}
 \centering
 \begin{tabular}[t]{lllll}
 \toprule
@@ -1787,21 +1799,21 @@ Model & Accuracy & Precision S & Precision Extra BH & Precision HR\\
 SMOTE & 0.6871 & 0.713 & 0.542 & 0.758\\
 \bottomrule
 \end{tabular}
+\end{table}
 
-}
-
-\end{table}%
-
-Table~\ref{tbl-acc-prec-comp} shows side by side comparisons of accuracy
-and precision for each model. While the models aren't perfect and there
-are inherent issues with class balance, bias, accuracy, and precision,
-the SMOTE model using synthetic data does a better job than the initial
+\textbf{Table 14} shows side by side comparisons of accuracy and
+precision for each model. While the models aren't perfect and there are
+inherent issues with class balance, bias, accuracy, and precision, the
+SMOTE model using synthetic data does a better job than the initial
 model according to these metrics. There are still issues with
 classification, as seen in the predicted probabilities. The SMOTE model
 is not extremely accurate in distinguishing singles from
 doubles/triples, but does a better job than the initial one. This
-iniability could simply be from the wide variation in ways a batter can
-hit a single, double/triple, which makes modeling difficult.
+inability could simply be from the wide variation in ways a batter can
+hit a single, double/triple, which makes modeling difficult. A main goal
+of this project is to see the different impacts that certain mechanics
+have on the outcome of a swing, and how players and coaches can use that
+to their advantage.
 
 \newpage
 
