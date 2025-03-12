@@ -1,5 +1,5 @@
 ---
-title: "Exploring MLB Batting Data Using Logistic Regression"
+title: "Exploring MLB Batting Data Using Multinomial Logistic Regression"
 author: "Vivian Johnson"
 format:
   pdf:
