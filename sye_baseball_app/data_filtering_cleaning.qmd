@@ -1,0 +1,60 @@
+filter and clean the data 
+organize it by player id - get rid of useless columns 
+
+```{r}
+library(tidyverse)
+batting_data_2024 <- read_csv("batting_without_g3.csv")
+```
+
+
+```{r}
+# ordering by batting id 
+batting_with_indicators <- batting_data_2024 %>%
+  arrange(batter) %>%
+  arrange(player_name) %>%
+  select(batter,
+         release_speed,
+         player_name,
+         events,
+         launch_speed,
+         launch_angle,
+         bat_speed,
+         swing_length,
+         hit_outcome,
+         swing_length_zscore,
+         bat_speed_zscore,
+         release_speed_zscore)
+
+# numeric cols
+
+batting_with_indicators$swing_length_zscore <- as.numeric(batting_with_indicators$swing_length_zscore)
+batting_with_indicators$bat_speed_zscore <- as.numeric(batting_with_indicators$bat_speed_zscore)
+batting_with_indicators$release_speed_zscore <- as.numeric(batting_with_indicators$release_speed_zscore)
+
+write_csv(batting_with_indicators,
+          "batting_indicators.csv")
+```
+
+
+```{r}
+batting_data <- read_csv("batting_indicators.csv")
+# sl, bs, rs, la
+print(mean)
+mean(batting_data$swing_length)
+mean(batting_data$bat_speed)
+mean(batting_data$release_speed)
+mean(batting_data$launch_angle)
+
+print(min)
+min(batting_data$swing_length)
+min(batting_data$bat_speed)
+min(batting_data$release_speed)
+min(batting_data$launch_angle)
+
+print(max)
+max(batting_data$swing_length)
+max(batting_data$bat_speed)
+max(batting_data$release_speed)
+max(batting_data$launch_angle)
+```
+
