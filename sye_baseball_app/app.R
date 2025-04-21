@@ -23,36 +23,76 @@ ui <- fluidPage(
     # TITLE
     titlePanel("Baseball Shiny App"),
     
-    tags$p(
-      "This application allows you to explore various baseball statistics for different players. ",
-      br(),
-      "You can select a player and view distributions of their hitting statistics such as launch angle, bat speed, swing length, and launch speed. ",
-      br(),
-      "Additionally, summary statistics will be provided to help analyze each player's performance.",
-      br(),
-      br(),  # Adds space before the bullet points
-      tags$strong("Key Variables Used:"),
-      br(),
-      tags$ul(
-        tags$li("Launch Angle: Vertical launch angle of the batted ball as tracked by Statcast. Refers to the angle at which the ball leaves the bat"),
-        tags$li("Bat Speed: Measurement of how fast the bat is moving when the player makes contact with the ball"),
-        tags$li("Swing Length: Total amount of feet the bat traveled during the swing (the total distance traveled by the barrel of the bat in x/y/z space)"),
-      )
-    ),
+    div(
+      style = "background-color: #f9f9f9; border-left: 5px solid #AFD0BF; padding: 15px; margin-top: 10px; border-radius: 5px;",
+      tags$p(
+        "This application allows you to explore various baseball statistics for different players. ",
+        br(),
+        br(), 
+        "You can select a player and view distributions of their hitting statistics such as launch angle, bat speed, swing length, and launch speed. ",
+        br(),
+        br(), 
+        "Additionally, summary statistics will be provided to help analyze each player's performance."
+      )),
+      
+      div(
+        style = "background-color: #f9f9f9; border-left: 5px solid #AFD0BF; padding: 15px; margin-top: 10px; border-radius: 5px;",
+        tags$p(
+          tags$b("Key Variables Used:"),
+          br(),
+          br(),
+          tags$b("Launch Angle:"), "Vertical launch angle of the batted ball as tracked by Statcast. Refers to the angle at which the ball leaves the bat",
+          br(),
+          tags$b("Bat Speed:"),"Measurement of how fast the bat is moving when the player makes contact with the ball",
+          br(),
+          tags$b("Swing Length:"),"Total amount of feet the bat traveled during the swing (the total distance traveled by the barrel of the bat in x/y/z space)"
+        )
+      ),
     
     selectizeInput("player_name",
-                label = "Select a Player:",
+                label = "Select or search for a Player:",
                 choices = unique(batting_data$player_name),
                 selected = NULL
                 ),
     
+    div(
+      style = "background-color: #f9f9f9; border-left: 5px solid #AFD0BF; padding: 15px; margin-top: 10px; border-radius: 5px;",
+      tags$p("This section allows you to explore the relationship between the statisics for the batter's hitting mechanics.
+             Select different variables to view either the distribution for the specific player, or a scatterplot to see what
+             tends to happen to one of the variables while the other increases. You can also incorporate a third dimension, the size of
+             the dot, to see how the level of the third varaible affects the other two variables.")
+    ),
+    
     # create distribution of launch speed, bat speed, swing length, launch angle, break down of hits? 
-    checkboxGroupInput("stat", 
-                label = "Select a Statistic to Plot",
-                choices = c("launch_angle",
-                            "bat_speed",
-                            "swing_length"), 
-                selected = NULL), 
+    fluidRow(
+      
+      column(4,
+             selectInput("x_var",
+                         "X Variable (required):",
+                         choices = c("bat_speed",
+                                     "swing_length",
+                                     "launch_angle"
+                                     )
+                         )
+             ),
+      column(4,
+             selectInput("y_var",
+                         "Y Variable (optional):",
+                         choices = c("None",
+                                     "bat_speed",
+                                     "swing_length",
+                                     "launch_angle")
+                         ),
+      ),
+      column(4,
+             selectInput("size_var",
+                         "Size Variable (optional):",
+                         choices = c("None", "bat_speed",
+                                     "swing_length",
+                                     "launch_angle")
+                         )
+      )
+    ),
     
     # diving and creating the plot and summary stats 
     fluidRow(
@@ -72,21 +112,45 @@ ui <- fluidPage(
       )
     ),
     
-    titlePanel("Model Development"),
+    titlePanel("Exploring Season Statistics and Predictions"),
     
-    tags$p(
-      "Another portion of this project involved model developement. A model was created to analyze the effect that bat speed, launch angle, swing length, and the picther's release speed have on the probability of a batter hitting a single, double or triple, or a homerun."
-    ),
+    div(
+      style = "background-color: #f9f9f9; border-left: 5px solid #AFD0BF; padding: 15px; margin-top: 10px; border-radius: 5px;",
+      tags$p(
+        "Another portion of this project involved model developement. 
+        A model was created to analyze the effect that bat speed, launch angle, swing length, and the picther's release speed have
+        on the probability of a batter hitting a single, double or triple, or a homerun.",
+        br(),
+        br(),
+        "The sliders are set to the selected player's median vlaue for the 2023-2024 season.",
+        br(),
+        br(), 
+        "Changing the values of the sliders represent hypothetical changes to a player's swing, and the model uses those changes to make
+        new predictions to how the individual player might perform for the season."
+    )),
     
     # INPUT FOR INITIAL MODEL 
     # want to input real numbers and then turn them into z scores , add interaction, and plug into model 
-    sliderInput("swing_length", "Input for Swing Length:", min = 1, max = 15, value = 1, step = .1),
-    sliderInput("bat_speed", "Input for Bat Speed:", min = 10, max = 100, value = 10, step = .1),
-    sliderInput("launch_angle", "Input for Launch Angle:", min = 0, max = 90, value = 0, step = .1),
+    fluidRow(
+      column(4,
+             sliderInput("swing_length", "Input for Swing Length:", min = 1, max = 15, value = 1, step = .1),
+             plotOutput("sl_box")
+      ),
+      column(4,
+             sliderInput("bat_speed", "Input for Bat Speed:", min = 10, max = 100, value = 10, step = .1),
+             plotOutput("bs_box")
+      ),
+      column(4,
+             sliderInput("launch_angle", "Input for Launch Angle:", min = 0, max = 90, value = 0, step = .1),
+             plotOutput("la_box")
+      )
+    ),
+    
     
     # submit button 
     actionButton("submit_button", "Make Predictions"),
-    verbatimTextOutput("prediction")
+    verbatimTextOutput("prediction"),
+    plotOutput("comparison_plot")
 
 )
 
@@ -113,20 +177,21 @@ server <- function(input, output, session) {
     output$stat_density_plot <- renderPlot({
       
       data_filtered <- filtered_data()
-      selected_stats <- input$stat
+      # getting inputs 
+      x_var <- input$x_var 
+      y_var <- input$y_var
+      size_var <- input$size_var
       
-      if(length(selected_stats) == 1){
-        # histogram of distribution 
-        stat_col <- selected_stats[1]
-
-        stat_mean <- mean(data_filtered[[stat_col]], na.rm = TRUE)
+      # histogram - only the x variable 
+      if(y_var == "None" & size_var == "None"){
+        stat_mean <- mean(data_filtered[[x_var]], na.rm = TRUE)
         # creating plot 
-        ggplot(data_filtered, aes_string(x = stat_col)) +
-          geom_density(alpha = 0.6, fill = "lightblue") + 
+        ggplot(data_filtered, aes_string(x = x_var)) +
+          geom_density(alpha = 0.6, fill = "#AFD0BF") + 
           labs(title = paste("Density Plot of",
-                             stat_col, "for",
+                             x_var, "for",
                              input$batter), 
-               x = stat_col, 
+               x = x_var, 
                y = "Density") +
           geom_vline(aes(xintercept = stat_mean),
                      color = "blue",
@@ -134,35 +199,26 @@ server <- function(input, output, session) {
                      size = 1) +
           theme_minimal()
       
-      }else if(length(selected_stats) == 2){
-        x <- selected_stats[1]
-        y <- selected_stats[2]
-
-          # scatter plot 
+      }else if (y_var != "None" & size_var == "None"){
         ggplot(data = data_filtered,
-               mapping = aes_string(x = x,
-                             y = y)) +
+               mapping = aes_string(x = x_var,
+                             y = y_var)) +
           geom_point(alpha = 0.6) +
-          labs(title = paste("Scatterplot: ", x, " vs ", y),
-               x = x,
-               y = y) +
+          labs(title = paste("Scatterplot: ", x_var, " vs ", y_var),
+               x = x_var,
+               y = y_var) +
           theme_minimal()
-        
-      } else if(length(selected_stats) == 3){
-        x <- selected_stats[1]
-        y <- selected_stats[2]
-        z <- selected_stats[3]
-          # 3 d 
+      } else {
         ggplot(data = data_filtered,
-               mapping = aes_string(x = x,
-                             y = y,
-                             size = z)) +
+               mapping = aes_string(x = x_var,
+                                    y = y_var,
+                                    size = size_var)) +
           geom_point(alpha = 0.6) +
-          labs(title = paste("Scatterplot: ", x, " vs ", y),
-               x = x,
-               y = y) +
+          labs(title = paste("Scatterplot: ", x_var, " vs ", y_var),
+               x = x_var,
+               y = y_var) +
           theme_minimal()
-        }
+        } 
       
       })
     
@@ -207,33 +263,33 @@ server <- function(input, output, session) {
     })
   
     
-    # SETTING VALUE OF SLIDER TO BE AVERAGE OF PLAYER SELECTED 
+    # SETTING VALUE OF SLIDER TO BE MEDIAN OF PLAYER SELECTED 
     observe({
       
-      # getting filtered data and means 
+      # getting filtered data and medians
       data_filtered = filtered_data()
       
-      mean_la <- mean(data_filtered$launch_angle, na.rm = TRUE)
-      mean_sl <- mean(data_filtered$swing_length, na.rm = TRUE)
-      mean_bs <- mean(data_filtered$bat_speed, na.rm = TRUE)
+      median_la <- median(data_filtered$launch_angle, na.rm = TRUE)
+      median_sl <- median(data_filtered$swing_length, na.rm = TRUE)
+      median_bs <- median(data_filtered$bat_speed, na.rm = TRUE)
       
       # updating values 
       updateSliderInput(
         session,
         "swing_length",
-        value = mean_sl
+        value = median_sl
       )
       
       updateSliderInput(
         session,
         "bat_speed",
-        value = mean_bs
+        value = median_bs
       )
       
       updateSliderInput(
         session,
         "launch_angle",
-        value = mean_la
+        value = median_la
       )
     })
     
@@ -282,13 +338,139 @@ server <- function(input, output, session) {
       # predict 
       prediction <- predict(initial_model, newdata = input_data, type = "class")
       
-      output$prediction <- renderText({
-        paste(
-          "predicted hit outcome: ", prediction
+      # getting actual outcomes 
+      data_filtered <- data_filtered %>%
+        mutate(
+          hit_outcome = case_when(
+            events == "single" ~ 1,
+            events %in% c("double", "triple") ~ 2,
+            events == "home_run" ~ 3
+          )
         )
+      
+      # actual season hit outcomes
+      actual_outcomes <- data_filtered %>%
+        group_by(hit_outcome) %>%
+        mutate(Count = n(),
+               Type = "Actual Season Statistics") %>%
+        rename(Hit = hit_outcome)
+      
+      # what the model predicted for each hit
+      prediction2 <- predict(initial_model, newdata = data_filtered, type = "class")
+      predicted_outcomes <- data.frame(Hit = prediction2,
+                                       Type = "Original Model Prediction")
+    
+      
+      # sum of predicted outcomes 
+      sum_pred_outcomes <- predicted_outcomes %>%
+        group_by(Hit) %>%
+        summarize(Count = n(), .groups = "drop") %>%
+        mutate(Type = "Original Model Prediction")
+  
+
+      # using input tweaked data 
+      tweaked_df <- data_filtered %>%
+        mutate(
+          swing_length = swing_length + swing_length_input,
+          bat_speed = bat_speed + bat_speed_input,
+          launch_angle = launch_angle + launch_angle_input
+        ) %>%
+        mutate(
+          swing_length_zscore = (swing_length - mean(swing_length, na.rm = TRUE)) / sd(swing_length, na.rm = TRUE),
+          bat_speed_zscore = (bat_speed - mean(bat_speed, na.rm = TRUE)) / sd(bat_speed, na.rm = TRUE),
+          launch_angle_zscore = (launch_angle - mean(launch_angle, na.rm = TRUE)) / sd(launch_angle, na.rm = TRUE)
+        )
+      
+      prediction_tweaked <- predict(initial_model, newdata = tweaked_df, type = "class")
+      tweaked_predicted_outcomes <- data.frame(Hit = prediction_tweaked,
+                                       Type = "Altered Model Prediction")
+      
+      # sum 
+      sum_new_outcomes <- tweaked_predicted_outcomes %>%
+        group_by(Hit) %>%
+        summarize(Count = n(), .groups = "drop") %>%
+        mutate(Type = "Altered Model Prediction")
+      
+      # combining 
+      actual_outcomes$Hit <- factor(actual_outcomes$Hit)
+      sum_pred_outcomes$Hit <- factor(sum_pred_outcomes$Hit)
+      sum_new_outcomes$Hit <- factor(sum_new_outcomes$Hit)
+      
+      combined_df <- bind_rows(actual_outcomes, sum_pred_outcomes, sum_new_outcomes)
+      combined_df$Type <- factor(combined_df$Type, levels = c("Actual Season Statistics",
+                                                              "Original Model Prediction",
+                                                              "Altered Model Prediction"))
+      
+      
+      output$comparison_plot <- renderPlot({
+        ggplot(data = combined_df,
+               mapping = aes(x = Hit, y = Count, fill = Hit)) +
+          facet_wrap(~ Type) +
+          geom_col(position = "dodge") +
+          labs(title = "Comparing Actual Season Statistics to Model Predicted Statistics",
+               x = "Hit Outcome",
+               y = "Count") +
+          theme_minimal(base_size = 14) +
+          theme(
+            plot.title = element_text(size = 18, face = "bold"),
+            axis.title = element_text(size = 16),
+            axis.text = element_text(size = 14),
+            strip.text = element_text(size = 15, face = "bold") 
+          )
       })
+      })
+    
+    # MAKING THE BOC PLOTS FOR THE SLIDERS 
+    
+    # swing length 
+    output$sl_box <- renderPlot({
+      data_filtered <- filtered_data()
+      ggplot(data = data_filtered,
+             mapping = aes(x = swing_length)) +
+        geom_boxplot(fill = "#AFD0BF") +
+        labs(title = "Boxplot for Swing Length") +
+        theme_minimal(base_size = 12) +
+        theme(
+          plot.title = element_text(size = 16, face = "bold"),
+          axis.title = element_text(size = 14),
+          axis.text = element_text(size = 12),
+          strip.text = element_text(size = 13, face = "bold") 
+        )
     })
+    # bat speed
+    output$bs_box <- renderPlot({
+      data_filtered <- filtered_data()
+      ggplot(data = data_filtered,
+             mapping = aes(x = bat_speed)) +
+        geom_boxplot(fill = "#AFD0BF") +
+        labs(title = "Boxplot for Bat Speed") +
+        theme_minimal(base_size = 12) +
+        theme(
+          plot.title = element_text(size = 16, face = "bold"),
+          axis.title = element_text(size = 14),
+          axis.text = element_text(size = 12),
+          strip.text = element_text(size = 13, face = "bold") 
+        )
+    })
+    # launch angle 
+    output$la_box <- renderPlot({
+      data_filtered <- filtered_data()
+      ggplot(data = data_filtered,
+             mapping = aes(x = launch_angle)) +
+        geom_boxplot(fill = "#AFD0BF") +
+        labs(title = "Boxplot for Launch Angle") +
+        theme_minimal(base_size = 12) +
+        theme(
+          plot.title = element_text(size = 16, face = "bold"),
+          axis.title = element_text(size = 14),
+          axis.text = element_text(size = 12),
+          strip.text = element_text(size = 13, face = "bold") 
+        )
+    })
+    
 }
 
 # Run the application 
 shinyApp(ui = ui, server = server)
+
+
