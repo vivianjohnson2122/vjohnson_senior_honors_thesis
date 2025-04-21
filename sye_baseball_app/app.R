@@ -134,15 +134,15 @@ ui <- fluidPage(
     fluidRow(
       column(4,
              sliderInput("swing_length", "Input for Swing Length:", min = 1, max = 15, value = 1, step = .1),
-             plotOutput("sl_box")
+             plotOutput("sl_box", height = "100px")
       ),
       column(4,
              sliderInput("bat_speed", "Input for Bat Speed:", min = 10, max = 100, value = 10, step = .1),
-             plotOutput("bs_box")
+             plotOutput("bs_box", height = "100px")
       ),
       column(4,
              sliderInput("launch_angle", "Input for Launch Angle:", min = 0, max = 90, value = 0, step = .1),
-             plotOutput("la_box")
+             plotOutput("la_box", height = "100px")
       )
     ),
     
@@ -415,7 +415,9 @@ server <- function(input, output, session) {
             plot.title = element_text(size = 18, face = "bold"),
             axis.title = element_text(size = 16),
             axis.text = element_text(size = 14),
-            strip.text = element_text(size = 15, face = "bold") 
+            strip.text = element_text(size = 15, face = "bold"),
+            panel.border = element_rect(color = "black",
+                                        fill = NA)
           )
       })
       })
@@ -434,7 +436,8 @@ server <- function(input, output, session) {
           plot.title = element_text(size = 16, face = "bold"),
           axis.title = element_text(size = 14),
           axis.text = element_text(size = 12),
-          strip.text = element_text(size = 13, face = "bold") 
+          strip.text = element_text(size = 13, face = "bold"),
+          axis.text.y = element_blank()
         )
     })
     # bat speed
@@ -449,7 +452,8 @@ server <- function(input, output, session) {
           plot.title = element_text(size = 16, face = "bold"),
           axis.title = element_text(size = 14),
           axis.text = element_text(size = 12),
-          strip.text = element_text(size = 13, face = "bold") 
+          strip.text = element_text(size = 13, face = "bold"),
+          axis.text.y = element_blank()
         )
     })
     # launch angle 
@@ -464,7 +468,8 @@ server <- function(input, output, session) {
           plot.title = element_text(size = 16, face = "bold"),
           axis.title = element_text(size = 14),
           axis.text = element_text(size = 12),
-          strip.text = element_text(size = 13, face = "bold") 
+          strip.text = element_text(size = 13, face = "bold") ,
+          axis.text.y = element_blank()
         )
     })
     
