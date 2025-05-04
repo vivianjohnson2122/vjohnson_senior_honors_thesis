@@ -29,8 +29,8 @@ differentiate based on what type of hit the batter gets. The diagram
 below shows the set up of a baseball field, where all the defensive
 players are positioned, as well as where the batter stands.
 
-<img src="baseball.png" style="width:80.0%;height:80.0%"
-alt="Diagram of baseball field (taken from http://www.conceptdraw.com/solution-park/sport-baseball)" />
+
+![Figure 1: Diagram of baseball field (taken from http://www.conceptdraw.com/solution-park/sport-baseball)](./images/figures/fig1.png)
 
 # Important Baseball Definitions
 
@@ -172,11 +172,11 @@ and analyze hit types. The important variables considered in this
 project are `events`, `release_speed`, `launch_angle`, `bat_speed`, and
 `swing_length`.
 
-![](./images/tables/tbl1.png)
+![Table 1: Important Variables Used](./images/tables/tbl1.png)
 
 ### Indicator Variables
 
-![](./images/tables/tbl2.png)
+![Table 2: Indicator Variables Used](./images/tables/tbl2.png)
 
 The indicator variable `hit_outcome` was created using the `events`
 variable in the data set and serves as the dependent variable for
@@ -238,8 +238,9 @@ batting_with_indicators <- batting_with_indicators %>%
 
 ### Distributions of Independent Variables
 
-![Distribution of Launch Angle](./images/figures/fig2.png) **Figure 2**
-above, and **Figure 3** below, show the distributions of the independent
+![Figure 2: Distribution of Launch Angle](./images/figures/fig2.png) 
+
+**Figure 2** above, and **Figure 3** below, show the distributions of the independent
 variables used during the model development process. From these figures,
 we can see that all follow an approximately normal distribution.
 Although multinomial logistic regression does not require normally
@@ -248,7 +249,7 @@ in interpretability. Additionally, this normality suggests that
 transformations to the independent variables such as log or polynomial
 terms might be unnecessary.
 
-![Distributions of Standardized Independent
+![Figure 3: Distributions of Standardized Independent
 Variables](./images/figures/fig3.png)
 
 ### Correlations
@@ -266,11 +267,11 @@ data, given that none of the correlations are excessively high (above
 0.8, which is usually considered to be an indicator of
 multicollinearity).
 
-![](./images/tables/tbl3.png)
+![Table 3: Correlation Matrix for Independent Variables](./images/tables/tbl3.png)
 
 ### K Means Cluster Analysis
 
-![Scatterplot of Bat Speed and Swing Length](./images/figures/fig4.png)
+![Figure 4: Scatterplot of Bat Speed and Swing Length](./images/figures/fig4.png)
 
 **Figure 4** shows a moderately positive linear relationship between the
 standardized swing length of a batter and the standardized bat speed of
@@ -318,9 +319,9 @@ cluster_analysis <- kmeans(batting_cluster,
                            nstart = 25)
 ```
 
-![Scatterplot showing clustered groups](./images/figures/fig5.png) :::
-{#tbl-4 tbl-cap=“K-Means Summary Statistics”}
-![](./images/tables/tbl4.png)
+![Figure 5: Scatterplot showing clustered groups](./images/figures/fig5.png) 
+
+![Table 4: K-Means Summary Statistics](./images/tables/tbl3.png)
 
 **Figure 5** shows the results from performing K=3 Means Cluster
 Analysis. It is evident that the third cluster has significantly
@@ -339,8 +340,9 @@ closer together, thus forming a more specific group. Since the WSS of
 group 3 is significantly lower than the other two groups and relatively
 small, removing the observations in this group is not of high concern.
 
-![The relationship between bat speed and swing length for each hit
-outcome](./images/figures/fig6.png) **Figure 6** shows the relationships
+![Figure 6: The relationship between bat speed and swing length for each hit outcome](./images/figures/fig6.png) 
+
+**Figure 6** shows the relationships
 between standardized bat speed and standardized swing length for each
 level of `hit_outcome` after removing the cluster of hits. For each hit
 outcome, there is a clear positive relationship between the bat speed
@@ -362,8 +364,7 @@ variables between these types of outs, as well as hits. This is
 important as it aids in understanding how these factors differ between
 outs and hits.
 
-![Distribution and mean launch angle by hit
-outcome](./images/figures/fig7.png)
+![Figure 7: Distribution and mean launch angle by hit outcome](./images/figures/fig7.png)
 
 **Figure 7** shows the distribution of launch angle for different hit
 outcomes. For each at bat that resulted in an actual hit (a single,
@@ -396,8 +397,7 @@ was negative, the conclusion was drawn that it was an error in recording
 the data. This serves as another layer that makes modeling this data
 more difficult.
 
-![Distributions of Dependent Variables by Hit
-Outcome](./images/figures/fig8.png)
+![Figure 8: Distributions of Dependent Variables by Hit Outcome](./images/figures/fig8.png)
 
 Similar to **Figure 7**, **Figure 8** shows the distribution of each
 standardized variable for each hit type, but also includes fly outs and
@@ -439,7 +439,7 @@ reg_model_1 <- multinom(hit_outcome ~
                    data = batting_without_g3) 
 ```
 
-![](./images/tables/tbl5.png)
+![Table 5: Regression Output for Initial Model](./images/tables/tbl5.png)
 
 **Table 5** shows the multinomial regression output for the initial
 model. The bold coefficients represent those with a p-value that is
@@ -489,17 +489,17 @@ and we can use it to further understand the relationship that each
 predictor variable has on the odds of hitting a double/triple or a
 homerun compared to a single.
 
-
 
-![](./images/tables/tbl6.png)
 
-
+![Table 6: Coefficient Interpretations for Initial Model](./images/tables/tbl6.png)
+
+
 
 The package `emmeans` in R compares the estimated marginal means. In
 this model, it allows us to see the differences in the average predicted
 probabilities for each hit outcome.
 
-![](./images/tables/tbl7.png)
+![Table 7: Estimated Probabilities for Each Hit Outcome](./images/tables/tbl7.png)
 
 **Table 7** shows the estimated probabilities for each hit outcome in
 this model. Singles are estimated to occur the most, about 75.2% of the
@@ -514,7 +514,7 @@ are much more prevalent in the data.
 
 #### Decision Tree Initial Model
 
-**?@fig-init-dec-tree** shows a decision tree of the initial model. The
+**Figure 9** shows a decision tree of the initial model. The
 decision tree is a classification model that visualizes the steps that
 the model goes through when attempting to classify each observation. The
 nodes of the tree correspond to the decisions are made based on certain
@@ -533,7 +533,7 @@ initial_decision_tree <- rpart(hit_outcome ~
                                method = "class")
 ```
 
-![Decision Tree for Initial Model](./images/figures/fig9.png)
+![Figure 9: Decision Tree for Initial Model](./images/figures/fig9.png)
 
 From **Figure 9**, we can see that classifying the type of hit mostly
 relies on a hit’s launch angle and bat speed. The model starts with all
@@ -548,7 +548,7 @@ each terminal node. It shows the outcome the model predicted, the
 percentage of the overall observations it makes up, as well as the
 percent of those observations that were actually of other classes.
 
-![](./images/tables/tbl8.png)
+![Table 8: Terminal Node by Hit](./images/tables/tbl8.png)
 
 It is evident that the model over classifies singles out of the data and
 doesn’t classify doubles/triples very well (only 6% are being classified
@@ -565,7 +565,7 @@ those that skewed away from the true population average. **Table 9** is
 a table corresponding to the relative sample sizes of each hit outcome
 (single, extra base, or homerun).
 
-![](./images/tables/tbl9.png)
+![Table 9: Sample Size By Class](./images/tables/tbl9.png)
 
 Due to the fact that the sample size within the observed data for a
 single is 23696, while doubles/triples and homeruns have 7772 and 5085
@@ -700,7 +700,7 @@ reg_model_smote<- multinom(hit_outcome_factor ~
 smote model. We can interpret the coefficients of the launch angle and
 interaction term similarly to the interpretation for the initial model.
 
-![](./images/tables/tbl10.png)
+![Table 10: Regression Output for SMOTE Model](./images/tables/tbl10.png)
 
 `launch_angle` has a value of 0.067 in the double/triple column. We can
 interpret this as follows:
@@ -734,11 +734,11 @@ higher, batters are less likely to hit a double or a triple.
 
 
 
-![](./images/tables/tbl11.png)
+![Table 11: Coefficient Interpretations SMOTE Model](./images/tables/tbl11.png)
 
 
 
-![](./images/tables/tbl12.png)
+![Table 12: Predicted Proabilities Summary Output by Class - SMOTE Model](./images/tables/tbl12.png)
 
 **Table 12** shows the emmeans summary output for the estimated
 probabilities of each hit type for the SMOTE model which uses a balanced
@@ -766,7 +766,7 @@ smote_decision_tree <- rpart(hit_outcome_factor ~
                              data = balanced_batting_data)
 ```
 
-![Decision Tree for SMOTE Model](./images/figures/fig10.png)
+![Figure 10: Decision Tree for SMOTE Model](./images/figures/fig10.png)
 
 Similar to the initial decision tree model, from **Figure 10**, we can
 see that classifying the type of hit mostly relies on a hit’s launch
@@ -776,7 +776,7 @@ model predicted, the percentage of the overall observations it makes up,
 as well as the percent of those observations that were actually of other
 classes.
 
-![](./images/tables/tbl13.png)
+![Table 13: Terminal Node Summary SMOTE Model](./images/tables/tbl13.png)
 
 After balancing the data, the decision tree does a better job at
 classifying doubles/triples and homeruns. In this model, 57% of the
@@ -855,8 +855,7 @@ stage_2_tree_initial <- rpart(hit_outcome ~
                       data = batting_test_initial)
 ```
 
-![Stage 2 Decision Tree from Predicted Probabilities (Initial
-Model)](./images/figures/fig11.png)
+![Figure 11: Stage 2 Decision Tree from Predicted Probabilities (Initial Model)](./images/figures/fig11.png)
 
 **Figure 11** shows the how the predicted probabilities affect the
 overall classification of the observation.
@@ -870,8 +869,7 @@ double/triple, and a probability greater than that is classified as a
 homerun. The summary table below shows the percentages for each terminal
 node.
 
-![Comparing the probability distributions across combinations of actual
-vs. predicted hits for the initial model](./images/figures/fig12.png)
+![Figure 12: Comparing the probability distributions across combinations of actual vs. predicted hits for the initial model](./images/figures/fig12.png)
 
 **Figure 12** shows each of the density distributions for the
 observations based on their predicted and actual class. By following a
@@ -950,8 +948,7 @@ stage_2_tree_smote <- rpart(hit_outcome_factor ~
                             data = batting_test_smote)
 ```
 
-<img src="./images/figures/fig13.png" width="375" height="375"
-alt="Decision Tree from Predicted Probabilities (SMOTE Model)" />
+![Figure 13: Decision Tree from Predicted Probabilities (SMOTE Model)](./images/figures/fig13.png)
 
 **Figure 13** shows the decision tree trained from the predicted
 probabilities of the balanced SMOTE model. The model begins by looking
@@ -966,8 +963,9 @@ separate the singles from the doubles/triples. This strategy differs
 from the initial model, which first decided if a hit was a single and
 then compared the other types.
 
-<img src="./images/figures/fig14.png" width="375" height="375"
-alt="Comparing the probability distributions across combinations of actual vs. predicted hits for the SMOTE model" />
+
+![Figure 14: Comparing the probability distributions across combinations of actual vs. predicted hits for the SMOTE model](./images/figures/fig14.png)
+
 
 **Figure 14** shows the density graphs of the predicted probabilities
 for the SMOTE model. The density distributions of hits that were
@@ -999,8 +997,7 @@ contribute the most to the model as well.
 
 ## Confusion Matrix Initial Model
 
-<img src="./images/figures/fig15.png" width="375" height="375"
-alt="Confusion Matrix for Initial Model showing the percentage of the actual class that was classified to the corresponding category" />
+![Figure 15: Confusion Matrix for Initial Model showing the percentage of the actual class that was classified to the corresponding category](./images/figures/fig15.png)
 
 **Figure 15** shows the confusion matrix for the initial multinomial
 logistic regression model. The percentages in each box indicate the
@@ -1039,8 +1036,7 @@ accuracy comes from predicting singles.
 
 ## Confusion Matrix SMOTE Model
 
-<img src="./images/figures/fig16.png" width="375" height="375"
-alt="Confusion matrix for SMOTE model showing the percentage of the actual class that was classified in that category" />
+![Figure 16: Confusion matrix for SMOTE model showing the percentage of the actual class that was classified in that category](./images/figures/fig16.png)
 
 <img src="./images/equations/eq7.png" width="400" />
 
@@ -1055,7 +1051,7 @@ homeruns are significantly higher compared to the initial model.
 
 # Discussion and Implications
 
-<img src="./images/tables/tbl14.png" width="400" />
+![Table 14: Summary of Accuracy and Precision by Model](./images/tables/tbl14.png)
 
 **Table 14** shows side by side comparisons of accuracy and precision
 for each model. While the models aren’t perfect and there are inherent
