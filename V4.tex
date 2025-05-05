@@ -241,7 +241,9 @@ such as K-means cluster analysis and decision trees to understand the
 distributions of the data and how observations are being classified in
 the multinomial model. Additionally, specific balancing techniques are
 explored to address inherent bias and imbalance in the data for the
-purpose of making more accuracte classifications.
+purpose of making more accuracte classifications. Also, a Shiny App was
+created in R to explore individual players and how altering their
+hitting profile impacts their season statistics and hit outcomes.
 \end{abstract}
 
 \newpage
@@ -392,6 +394,7 @@ As there are some disadvantages of accuracy with the raw initial data
 set, precision can also be used to evaluate the model for each level of
 the response variable (\(i\)). Precision is the ratio of true positives
 to all observations that were identified as positives in the model.
+(Gergis (2024))
 
 \[Precision_i = \frac{TP_i}{TP_i + FP_i}\]
 
@@ -592,11 +595,11 @@ Variables}
 
 \textbf{Table 3} shows a correlation matrix for the independent
 variables. The table includes standardized bat speed, standardized
-release score, standardized swing length, and launch angle. The highest
+release speed, standardized swing length, and launch angle. The highest
 correlation is between \texttt{bat\ speed} and \texttt{swing\ length},
 with a value of \(0.589\). This indicates a moderate positive
 correlation, which is logical, as higher bat speeds tend to be
-associated with longer swing lengths.
+associated with longer swing lengths. (Russell (2008))
 
 Since this is the highest correlation, and other correlations are low,
 multicollinearity does not appear to be a significant concern in the
@@ -871,7 +874,7 @@ interaction between \texttt{bat\_speed\_zscore} and
 
 \begin{table}[!h]
 \centering
-\caption{\label{tab:unnamed-chunk-32}Stage 1 Multinomial Logistic Regression Output for Initial Model}
+\caption{\label{tab:unnamed-chunk-33}Stage 1 Multinomial Logistic Regression Output for Initial Model}
 \centering
 \begin{tabular}[t]{l>{\raggedleft\arraybackslash}p{3cm}r>{\raggedleft\arraybackslash}p{2cm}r}
 \toprule
@@ -922,8 +925,8 @@ swing length and bat speed. With a logit coefficient of \(0.09\), we can
 turn it into an odds ratio of \(1.094\) and understand it as:
 
 \textbf{\emph{On average, for each standard deviation increase in a
-batter's swing length, the effect of standardized swing lenth on the
-odds of hitting a doulbe/triple instead of a single increases by a
+batter's swing length, the effect of standardized swing length on the
+odds of hitting a double/triple instead of a single increases by a
 factor of 1.094}}
 
 The interaction between bat speed and swing length suggests that as both
@@ -941,20 +944,20 @@ or a homerun compared to a single.
 
 \begin{table}[!h]
 \centering
-\caption{\label{tab:unnamed-chunk-33}Stage 1 Multinomial Logistic Regression Coefficient Interpretations}
+\caption{\label{tab:unnamed-chunk-34}Stage 1 Multinomial Logistic Regression Coefficient Interpretations}
 \centering
 \fontsize{10}{12}\selectfont
 \begin{tabular}[t]{>{\raggedright\arraybackslash}p{3cm}>{\raggedright\arraybackslash}p{2cm}>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{2cm}>{\raggedright\arraybackslash}p{4cm}}
 \toprule
 \multicolumn{1}{c}{ } & \multicolumn{2}{c}{Double/Triple} & \multicolumn{2}{c}{Homerun} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-Term & Estimate (Logit) & Interpretation & Estimate  & Interpretation \\
+Term & Estimate (Odds) & Interpretation & Estimate  & Interpretation \\
 \midrule
 \cellcolor{gray!10}{Swing Length Z-Score} & \textbf{\cellcolor{gray!10}{1.171}} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a batter's swing length is associated with an increase in the odds of hitting a double or triple by a factor of 1.171.} & \textbf{\cellcolor{gray!10}{1.483}} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a batter's swing length is associated with an increase in the odds of hitting a homerun by a factor of 1.483}\\
 Bat Speed Z-Score & \textbf{1.619} & On average, an increase in one standard deviation of a batter's bat speed is associated with an increase in the odds of hitting a double or triple by a factor of 1.619 & \textbf{4.998} & On average, an increase in one standard deviation of a batter's bat speed is associated with an increase in the odds of hitting a homerun by a factor of 4.998\\
-\cellcolor{gray!10}{Release Speed Z-Score} & \cellcolor{gray!10}{0.99} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a pitcher's release speed is associated with an decrease in the odds of hitting a double or triple by a factor of 0.99} & \textbf{\cellcolor{gray!10}{1.090}} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a pitcher's release speed is associated with an increase in the odds of hitting a homerun by a factor of 1.090}\\
+\cellcolor{gray!10}{Release Speed Z-Score} & \cellcolor{gray!10}{0.99} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a pitcher's release speed is associated with an increase in the odds of hitting a double or triple by a factor of 0.99} & \textbf{\cellcolor{gray!10}{1.090}} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a pitcher's release speed is associated with an increase in the odds of hitting a homerun by a factor of 1.090}\\
 Launch Angle & \textbf{1.067} & On average, an increase in one degree of a batter's launch angle is associated with an increase in the odds of hitting a double or triple by a factor of 1.067 & \textbf{1.231} & On average, an increase in one degree of a batter's launch angle is associated with an increase in the odds of hitting a homerun by a factor of 1.231\\
-\cellcolor{gray!10}{Swing Length / Bat Speed Interaction} & \textbf{\cellcolor{gray!10}{1.094}} & \cellcolor{gray!10}{On average, for each standard deviation increase in a batter's swing length, the effect of standardized swing lenth on the odds of hitting a doulbe/triple instead of a single increases by a factor of 1.094.} & \textbf{\cellcolor{gray!10}{0.784}} & \cellcolor{gray!10}{On average, for each standard deviation increase in a batter's swing length, the effect of standardized swing lenth on the odds of hitting a homerun instead of a single decreases by a factor of 0.784}\\
+\cellcolor{gray!10}{Swing Length / Bat Speed Interaction} & \textbf{\cellcolor{gray!10}{1.094}} & \cellcolor{gray!10}{On average, for each standard deviation increase in a batter's swing length, the effect of standardized swing lenth on the odds of hitting a doulbe/triple instead of a single increases by a factor of 1.094.} & \textbf{\cellcolor{gray!10}{0.784}} & \cellcolor{gray!10}{On average, for each standard deviation increase in a batter's swing length, the effect of standardized swing lenth on the odds of hitting a homerun instead of a single increases by a factor of 0.784}\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -963,11 +966,11 @@ Launch Angle & \textbf{1.067} & On average, an increase in one degree of a batte
 
 The package \texttt{emmeans} in R compares the estimated marginal means.
 In this model, it allows us to see the differences in the average
-predicted probabilities for each hit outcome.
+predicted probabilities for each hit outcome. (Lenth (2024))
 
 \begin{table}[!h]
 \centering
-\caption{\label{tab:unnamed-chunk-35}Stage 1 emmeans Summary for Initial Model}
+\caption{\label{tab:unnamed-chunk-36}Stage 1 emmeans Summary for Initial Model}
 \centering
 \begin{tabular}[t]{lrr}
 \toprule
@@ -1045,7 +1048,7 @@ classes.
 
 \begin{table}[!h]
 \centering
-\caption{\label{tab:unnamed-chunk-38}Results of stage 1 decision tree classification for the initial model}
+\caption{\label{tab:unnamed-chunk-39}Results of stage 1 decision tree classification for the initial model}
 \centering
 \begin{tabular}[t]{lllll}
 \toprule
@@ -1076,7 +1079,7 @@ outcome (single, extra base, or homerun).
 
 \begin{table}[!h]
 \centering
-\caption{\label{tab:unnamed-chunk-39}Summary of Sample Sizes for Each Class}
+\caption{\label{tab:unnamed-chunk-40}Summary of Sample Sizes for Each Class}
 \centering
 \begin{tabular}[t]{ll}
 \toprule
@@ -1232,7 +1235,7 @@ initial model.
 
 \begin{table}[!h]
 \centering
-\caption{\label{tab:unnamed-chunk-43}Stage 1 Multinomial Logistic Regression Output for SMOTE Model}
+\caption{\label{tab:unnamed-chunk-44}Stage 1 Multinomial Logistic Regression Output for SMOTE Model}
 \centering
 \begin{tabular}[t]{l>{\raggedleft\arraybackslash}p{3cm}r>{\raggedleft\arraybackslash}p{2cm}r}
 \toprule
@@ -1255,15 +1258,15 @@ Swing Length/Bat Speed Interaction & \textbf{0.107} & 0.015 & \textbf{-0.305} & 
 column. We can interpret this as follows:
 
 \textbf{\emph{On average, a one degree increase in a batter's launch
-angle is associated with an increase in the probability of hitting a
-double or a triple by about 1.95\%}}
+angle is associated with an increase in the odds of hitting a double or
+a triple by a factor of 1.069}}
 
 With a logit coefficient of \(0.107\), we can turn it into an odds ratio
 of \(1.113\) and understand the interaction between swing length and bat
 speed as:
 
 \textbf{\emph{On average, for each standard deviation increase in a
-batter's swing length, the effect of standardized swing lenth on the
+batter's swing length, the effect of standardized swing length on the
 odds of hitting a double/triple instead of a single increases by a
 factor of 1.113}}
 
@@ -1276,17 +1279,17 @@ enhanced as bat speed increases.
 \textbf{Table 11} shows the interpretations for the coefficients of the
 SMOTE model that were turned into odds ratios. This allows us to better
 understand the relationship between the predictors and hit types. From
-these, we can see that standardized bat speed as some of the most impact
-on differentiating between singles and doubles, as well as singles and
-homeruns. Release speed z-score has a negative effect on hitting a
-double or triple compared a single, meaning that as pitch speeds get
-higher, batters are less likely to hit a double or a triple.
+these, we can see that standardized bat speed has some of the most
+impact on differentiating between singles and doubles, as well as
+singles and homeruns. Release speed z-score has a negative effect on
+hitting a double or triple compared a single, meaning that as pitch
+speeds get higher, batters are less likely to hit a double or a triple.
 
 \newpage
 
 \begin{table}[!h]
 \centering
-\caption{\label{tab:unnamed-chunk-44}Stage 1 Multinomial Logistic Regression Coefficient Interpretations SMOTE Model}
+\caption{\label{tab:unnamed-chunk-45}Stage 1 Multinomial Logistic Regression Coefficient Interpretations SMOTE Model}
 \centering
 \fontsize{10}{12}\selectfont
 \begin{tabular}[t]{>{\raggedright\arraybackslash}p{3cm}>{\raggedright\arraybackslash}p{2cm}>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{2cm}>{\raggedright\arraybackslash}p{4cm}}
@@ -1297,9 +1300,9 @@ Term & Estimate & Interpretation & Estimate.1 & Interpretation.\\
 \midrule
 \cellcolor{gray!10}{Swing Length Z-Score} & \textbf{\cellcolor{gray!10}{1.177}} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a batter's swing length is associated with an increase in the odds of hitting a double or triple by a factor of 1.177.} & \textbf{\cellcolor{gray!10}{1.522}} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a batter's swing length is associated with an increase in the odds of hitting a homerun by a factor of 1.522}\\
 Bat Speed Z-Score & \textbf{1.659} & On average, an increase in one standard deviation of a batter's bat speed is associated with an increase in the odds of hitting a double or triple by a factor of 1.659 & \textbf{6.013} & On average, an increase in one standard deviation of a batter's bat speed is associated with an increase in the odds of hitting a homerun by a factor of 6.013\\
-\cellcolor{gray!10}{Release Speed Z-Score} & \cellcolor{gray!10}{0.99} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a pitcher's release speed is associated with an decrease in the odds of hitting a double or triple by a factor of 0.99} & \textbf{\cellcolor{gray!10}{1.092}} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a pitcher's release speed is associated with an increase in the odds of hitting a homerun by a factor of 1.092}\\
+\cellcolor{gray!10}{Release Speed Z-Score} & \cellcolor{gray!10}{0.99} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a pitcher's release speed is associated with an increase in the odds of hitting a double or triple by a factor of 0.99} & \textbf{\cellcolor{gray!10}{1.092}} & \cellcolor{gray!10}{On average, an increase in one standard deviation of a pitcher's release speed is associated with an increase in the odds of hitting a homerun by a factor of 1.092}\\
 Launch Angle & \textbf{1.069} & On average, an increase in one degree of a batter's launch angle is associated with an increase in the odds of hitting a double or triple by a factor of 1.069 & \textbf{1.300} & On average, an increase in one degree of a batter's launch angle is associated with an increase in the odds of hitting a homerun by a factor of 1.300\\
-\cellcolor{gray!10}{Swing Length / Bat Speed Interaction} & \textbf{\cellcolor{gray!10}{1.113}} & \cellcolor{gray!10}{On average, for each standard deviation increase in a batter's swing length, the effect of standardized swing lenth on the odds of hitting a double/triple instead of a single increases by a factor of 1.113} & \textbf{\cellcolor{gray!10}{0.737}} & \cellcolor{gray!10}{On average, for each standard deviation increase in a batter's swing length, the effect of standardized swing lenth on the odds of hitting a homerun instead of a single decreases by a factor of 0.737}\\
+\cellcolor{gray!10}{Swing Length / Bat Speed Interaction} & \textbf{\cellcolor{gray!10}{1.113}} & \cellcolor{gray!10}{On average, for each standard deviation increase in a batter's swing length, the effect of standardized swing lenth on the odds of hitting a double/triple instead of a single increases by a factor of 1.113} & \textbf{\cellcolor{gray!10}{0.737}} & \cellcolor{gray!10}{On average, for each standard deviation increase in a batter's swing length, the effect of standardized swing lenth on the odds of hitting a homerun instead of a single increases by a factor of 0.737}\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1308,7 +1311,7 @@ Launch Angle & \textbf{1.069} & On average, an increase in one degree of a batte
 
 \begin{table}[!h]
 \centering
-\caption{\label{tab:unnamed-chunk-45}Stage 1 emmeans Summary Output for SMOTE Model}
+\caption{\label{tab:unnamed-chunk-46}Stage 1 emmeans Summary Output for SMOTE Model}
 \centering
 \begin{tabular}[t]{lrr}
 \toprule
@@ -1372,7 +1375,7 @@ observations that were actually of other classes.
 
 \begin{table}[!h]
 \centering
-\caption{\label{tab:unnamed-chunk-48}Results of stage 1 decision tree classification for the SMOTE model}
+\caption{\label{tab:unnamed-chunk-49}Results of stage 1 decision tree classification for the SMOTE model}
 \centering
 \begin{tabular}[t]{lllll}
 \toprule
@@ -1688,15 +1691,15 @@ hits that fall in that category.
 The initial model attempts to classify the hit type using the
 standardized swing length, standardized bat speed, standardized release
 speed, launch angle, and an interaction between standardized bat speed
-and standardized swing length. All predictors in the model are
-significant and bat speed and swing length seem to contribute the most
-to model.
+and standardized swing length. All predictors in the model except for
+\texttt{release\ speed\ zscore}are significant at the \(0.01\) level,
+and bat speed and swing length seem to contribute the most to model.
 
 The SMOTE model takes all of the same predictors, but uses different
 data. The new balanced data has roughly the same amount of observations
-among classes to prevent one class from creating bias. All predictors in
-this model are significant and bat speed and swing length both
-contribute the most to the model as well.
+among classes to prevent one class from creating bias. The same
+predictors in this model are significant, and bat speed and swing length
+both contribute the most to the model as well.
 
 \subsection{Confusion Matrix Initial
 Model}\label{confusion-matrix-initial-model}
@@ -1789,7 +1792,7 @@ initial model.
 
 \begin{table}[!h]
 \centering
-\caption{\label{tab:unnamed-chunk-69}Accuracy and Precision Comparison}
+\caption{\label{tab:unnamed-chunk-70}Accuracy and Precision Comparison}
 \centering
 \begin{tabular}[t]{lllll}
 \toprule
@@ -1815,6 +1818,25 @@ of this project is to see the different impacts that certain mechanics
 have on the outcome of a swing, and how players and coaches can use that
 to their advantage.
 
+\section{Shiny App}\label{shiny-app}
+
+A Shiny App was made using R inorder to visualize how changing one
+aspect of a player's swing can alter the predictions that the model
+makes for their statistics for the season. The app allows the user to
+filter and search by player. Upon selecting a player, the user can view
+distributions for their key hitting statistics that are used in the
+model (swing length, bat speed, and launch angle). The user can then use
+sliders to alter the values that the model uses for each aspect of a
+swing. Using those updated values, the SMOTE model will make new
+predictions. The model would calculate the predicted number of singles,
+doubles/triples, and homeruns the player would be expected to hit with
+those statistics. Then, the user can view side by side bar graphs of
+their actual statistics for the season, what the SMOTE model originally
+predicted them to hit, and what the model would predict with the altered
+statistics. The purpose of this app was to visualize the impact that
+altering certain parts of the swing could have on overall outcomes for
+the season.
+
 \newpage
 
 \section*{References}\label{references}
@@ -1828,9 +1850,25 @@ Kegelmeyer. 2002. {``SMOTE: Synthetic Minority over-Sampling
 Technique.''} \emph{Journal of Artificial Intelligence Research} 16:
 321--57.
 
+\bibitem[\citeproctext]{ref-gergisexploring}
+Gergis, Heidar. 2024. {``Exploring Factors Influencing on-Base
+Percentage in Modern Baseball.''} Lund University.
+\url{https://lup.lub.lu.se/luur/download?func=downloadFile&recordOId=9175631&fileOId=9175632}.
+
+\bibitem[\citeproctext]{ref-emmeans}
+Lenth, Russell V. 2024. \emph{Emmeans: Estimated Marginal Means, Aka
+Least-Squares Means}. \url{https://CRAN.R-project.org/package=emmeans}.
+
 \bibitem[\citeproctext]{ref-baseballr}
 Petti, Bill, and Saiem Gilani. 2024. \emph{Baseballr: Acquiring and
 Analyzing Baseball Data}. \url{https://github.com/mlascaleia/baseballr}.
+
+\bibitem[\citeproctext]{ref-russell_batw}
+Russell, Daniel A. 2008. {``Bat Weight, Swing Speed and Ball
+Velocity.''} Physics and Acoustics of Baseball \& Softball Bats.
+University Park, PA: The Pennsylvania State University; Online; Graduate
+Program in Acoustics.
+\url{https://www.acs.psu.edu/drussell/bats/batw8.html}.
 
 \bibitem[\citeproctext]{ref-baseballsavant}
 Statcast, MLB. 2024. {``Statcast Bat Tracking Leaderboard.''} Major

@@ -1,10 +1,6 @@
 # Exploring MLB Batting Data Using Multinomial Logistic Regression
 Vivian Johnson
 
-
-
-
-
 # Introduction
 
 Baseball is a competitive game that revolves around a defensive
@@ -115,7 +111,7 @@ categories to the data) can be defined as:
 As there are some disadvantages of accuracy with the raw initial data
 set, precision can also be used to evaluate the model for each level of
 the response variable (i). Precision is the ratio of true positives to
-all observations that were identified as positives in the model.
+all observations that were identified as positives in the model.(Gergis(2024))
 
 <img src="./images/equations/eq3.png" width="400" />
 
@@ -259,7 +255,7 @@ The table includes standardized bat speed, standardized release score,
 standardized swing length, and launch angle. The highest correlation is
 between `bat speed` and `swing length`, with a value of 0.589. This
 indicates a moderate positive correlation, which is logical, as higher
-bat speeds tend to be associated with longer swing lengths.
+bat speeds tend to be associated with longer swing lengths. (Russell (2008))
 
 Since this is the highest correlation, and other correlations are low,
 multicollinearity does not appear to be a significant concern in the
@@ -475,8 +471,8 @@ swing length and bat speed. With a logit coefficient of 0.09, we can
 turn it into an odds ratio of 1.094 and understand it as:
 
 ***On average, for each standard deviation increase in a batter’s swing
-length, the effect of standardized swing lenth on the odds of hitting a
-doulbe/triple instead of a single increases by a factor of 1.094***
+length, the effect of standardized swing length on the odds of hitting a
+double/triple instead of a single increases by a factor of 1.094***
 
 The interaction between bat speed and swing length suggests that as both
 increase, the likelihood of hitting a double or triple increases
@@ -497,7 +493,7 @@ homerun compared to a single.
 
 The package `emmeans` in R compares the estimated marginal means. In
 this model, it allows us to see the differences in the average predicted
-probabilities for each hit outcome.
+probabilities for each hit outcome. (Lenth(2024))
 
 ![Table 7: Estimated Probabilities for Each Hit Outcome](./images/tables/tbl7.png)
 
@@ -706,8 +702,8 @@ interaction term similarly to the interpretation for the initial model.
 interpret this as follows:
 
 ***On average, a one degree increase in a batter’s launch angle is
-associated with an increase in the probability of hitting a double or a
-triple by about 1.95%***
+associated with an increase in the odds of hitting a double or a
+triple by a factor of 1.069***
 
 With a logit coefficient of 0.107, we can turn it into an odds ratio of
 1.113 and understand the interaction between swing length and bat speed
@@ -985,14 +981,13 @@ category.
 The initial model attempts to classify the hit type using the
 standardized swing length, standardized bat speed, standardized release
 speed, launch angle, and an interaction between standardized bat speed
-and standardized swing length. All predictors in the model are
-significant and bat speed and swing length seem to contribute the most
+and standardized swing length. All predictors except for release speed zscore are significant at the 0.01 level, and bat speed and swing length seem to contribute the most
 to model.
 
 The SMOTE model takes all of the same predictors, but uses different
 data. The new balanced data has roughly the same amount of observations
-among classes to prevent one class from creating bias. All predictors in
-this model are significant and bat speed and swing length both
+among classes to prevent one class from creating bias. The same predictors in
+this model are significant, and bat speed and swing length both
 contribute the most to the model as well.
 
 ## Confusion Matrix Initial Model
@@ -1066,7 +1061,9 @@ makes modeling difficult. A main goal of this project is to see the
 different impacts that certain mechanics have on the outcome of a swing,
 and how players and coaches can use that to their advantage.
 
-
+# Shiny App
+
+A Shiny App was made using R inorder to visualize how changing one aspect of a player's swing can alter the predictions that the model makes for their statistics for the season. The app allows the user to filter and search by player. Upon selecting a player, the user can view distributions for their key hitting statistics that are used in the model (swing length, bat speed, and launch angle). The user can then use sliders to alter the values that the model uses for each aspect of a swing. Using those updated values, the SMOTE model will make new predictions. The model would calculate the predicted number of singles, doubles/triples, and homeruns the player would be expected to hit with those statistics. Then, the user can view side by side bar graphs of their actual statistics for the season, what the SMOTE model originally predicted them to hit, and what the model would predict with the altered statistics. The purpose of this app was to visualize the impact that altering certain parts of the swing could have on overall outcomes for the season. 
 
 # References
 
@@ -1081,10 +1078,31 @@ Kegelmeyer. 2002. “SMOTE: Synthetic Minority over-Sampling Technique.”
 
 </div>
 
+<div id="refs" class="references csl-bib-body hanging-indent"
+entry-spacing="0">
+
+<div id="ref-gergisexploring" class="csl-entry">
+
+Gergis, Heidar. 2024. “Exploring Factors Influencing on-Base Percentage in Modern Baseball.” Lund University. <https://lup.lub.lu.se/luur/download?func=downloadFile&recordOId=9175631&fileOId=9175632>.
+
+</div>
+
+<div id="ref-emmeans" class="csl-entry">
+
+Lenth, Russell V. 2024.Emmeans: Estimated Marginal Means, Aka Least-Squares Means.<https://CRAN.R-project.org/package=emmeans>.
+
+</div>
+
 <div id="ref-baseballr" class="csl-entry">
 
 Petti, Bill, and Saiem Gilani. 2024. *Baseballr: Acquiring and Analyzing
 Baseball Data*. <https://github.com/mlascaleia/baseballr>.
+
+</div>
+
+<div id="ref-russell_batw" class="csl-entry">
+
+baseballr.Russell, Daniel A. 2008. “Bat Weight, Swing Speed and Ball Velocity.” Physics and Acoustics ofBaseball & Softball Bats. University Park, PA: The Pennsylvania State University; Online;Graduate Program in Acoustics. <https://www.acs.psu.edu/drussell/bats/batw8.html>.
 
 </div>
 
