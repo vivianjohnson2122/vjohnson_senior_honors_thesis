@@ -11,7 +11,7 @@ header-includes: |
 execute: 
   warning: false
 abstract: |
-  This project aims to study classification and its applications to Major League Baseball (MLB) batting data. The goal is to develop a model that is capable of classifying a hit based on various in-game metrics, including release speed, launch angle, bat speed, and swing length. The model development process incorporates different statistical techniques such as K-means cluster analysis and decision trees to understand the distributions of the data and how observations are being classified in the multinomial model. Additionally, specific balancing techniques are explored to address inherent bias and imbalance in the data for the purpose of making more accuracte classifications. Also, a Shiny App was created in R to explore individual players and how altering their hitting profile impacts their season statistics and hit outcomes. 
+  This project aims to study classification and its applications to Major League Baseball (MLB) batting data. The goal is to develop a model that is capable of classifying a hit based on various in-game metrics, including release speed, launch angle, bat speed, and swing length. The model development process incorporates different statistical techniques such as K-means cluster analysis and decision trees to understand the distributions of the data and how observations are being classified in the multinomial model. Additionally, specific balancing techniques are explored to address inherent bias and imbalance in the data for the purpose of making more accurate classifications. Also, a Shiny App was created in R to explore individual players and how altering their hitting profile impacts their season statistics and hit outcomes. 
 bibliography: references.bib
 ---
 
